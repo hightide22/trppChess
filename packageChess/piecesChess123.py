@@ -1,4 +1,4 @@
-import pack.board 
+import boardChess123
 
 class Piece:
     x = 0
@@ -13,7 +13,7 @@ class Piece:
     def __str__(self):
         return self.strType
     
-    def move():
+    def move(self):
         pass
     
     
@@ -27,8 +27,8 @@ class Pawn(Piece):
     
     def __init__(self, color, x, y) -> None:
         super().__init__(color, x, y)
-        super().strType = "p"       
-    def move():
+        self.strType = "p"
+    def move(self):
         ...    
                
 class PawnWhite(Pawn):
@@ -48,8 +48,8 @@ class PawnBlack(Pawn):
 class King(Piece):
     def __init__(self, color, x, y) -> None:
         super().__init__(color, x, y)
-        super().strType = "K"       
-    def move(): ...    
+        self.strType = "K"
+    def move(self): ...
     
 class KingWhite(King):
     def __init__(self, x, y) -> None:
@@ -67,8 +67,8 @@ class KingBlack(King):
 class Queen(Piece):
     def __init__(self, color, x, y) -> None:
         super().__init__(color, x, y)
-        super().strType = "q"       
-    def move(): ...       
+        self.strType = "q"
+    def move(self): ...
 
 class QueenWhite(Queen):
     def __init__(self, x, y) -> None:
@@ -87,8 +87,8 @@ class QueenBlack(Queen):
 class Bishop(Piece):
     def __init__(self, color, x, y) -> None:
         super().__init__(color, x, y)
-        super().strType = "b"       
-    def move(): ...  
+        self.strType = "b"
+    def move(self): ...
         
 class BishopWhite(Bishop):
     def __init__(self, x, y) -> None:
@@ -108,8 +108,8 @@ class BishopBlack(Bishop):
 class Rook(Piece):
     def __init__(self, color, x, y) -> None:
         super().__init__(color, x, y)
-        super().strType = "r"       
-    def move(): ...  
+        self.strType = "r"
+    def move(self): ...
         
 class RookWhite(Rook):
     def __init__(self, x, y) -> None:
@@ -127,8 +127,8 @@ class RookBlack(Rook):
 class Knight(Piece):
     def __init__(self, color, x, y) -> None:
         super().__init__(color, x, y)
-        super().strType = "k"       
-    def move(): ...  
+        self.strType = "k"
+    def move(self): ...
 
 class KnightWhite(Knight):
     def __init__(self, x, y) -> None:
