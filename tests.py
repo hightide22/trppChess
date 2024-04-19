@@ -1,6 +1,12 @@
-import pack.pieces as pieces
-a = pieces.EmptySpace(0, 0)
-b = pieces.BishopBlack(1, 1)
-print(type(a) == type(pieces.EmptySpace(0,0)))
+from packageChess import boardChess123 as boardChess
+from packageChess import piecesChess123 as piecesChess
 
+gameBoard = boardChess.Board()
+gameBoard.setStandartBoard()
+gameBoard
+print((gameBoard.board))
 
+b = piecesChess.BishopBlack(1, 1)
+k = piecesChess.KnightBlack(0, 0)
+
+print(isinstance(b , piecesChess.Knight))
