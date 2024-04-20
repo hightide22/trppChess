@@ -11,6 +11,8 @@ class Board:
     kingWhite = None
     kingBlack = None
 
+    enPassant = ()
+
     turn = 1
 
     space = type(pieces.EmptySpace(0, 0))
@@ -28,18 +30,31 @@ class Board:
             return True
         return False
 
-    def isKillOkay(self, x, y, color) -> True | False:
+    def isKillOkay(self, x, y, piece) -> True | False:
         if x >= self.height or y >= self.width or x < 0 or y < 0: return False
-        if self.board[y][x].color == color*-1: return True
+        pieceT = self.board[y][x]
+        if isinstance(piece, pieces.Pawn) and len(self.enPassant) != 0:
+            if x == self.enPassant[0] and y == self.enPassant[1] and piece.color == self.enPassant[2] * -1:
+                #self.board[y + piece.color][x] = pieces.EmptySpace(x, y+piece.color)
+                return True
+        if piece.color == pieceT.color*-1: return True
         return False
 
     def movePiece(self, xStart, yStart, xEnd, yEnd ):
         piece = self.board[yStart][xStart]
+        pieceT = self.board[yEnd][xEnd]
         piece.move(xEnd, yEnd)
         self.board[yStart][xStart] = pieces.EmptySpace(xStart, yStart)
         self.board[yEnd][xEnd] = piece
         piece.x = xEnd
         piece.y = yEnd
+        if isinstance(piece, pieces.Pawn) and isinstance(pieceT, self.space):
+            self.board[yStart][xEnd] = pieces.EmptySpace(xEnd, yStart)
+        if isinstance(piece, pieces.Pawn) and abs(yStart - yEnd) == 2:
+            self.enPassant = ((xStart + xEnd)/2 , (yStart + yEnd)/2, piece.color)
+        else:
+            self.enPassant = ()
+
     def transformDir(self, x, y) -> [[],[]]:
         result = [[], []]
         piece = self.board[y][x]
@@ -48,7 +63,7 @@ class Board:
             for move in dirs:
                 if self.isStepOkay(move[0], move[1]):
                     result[0].append(move)
-                elif self.isKillOkay(move[0], move[1], piece.color):
+                elif self.isKillOkay(move[0], move[1], piece):
                     result[1].append(move)
             return result
         if isinstance(piece, pieces.Pawn):
@@ -56,7 +71,7 @@ class Board:
                 for move in dirs[i]:
                     if self.isStepOkay(move[0], move[1]) and i < 4:
                         result[0].append(move)
-                    if self.isKillOkay(move[0], move[1], piece.color) and i > 3:
+                    if self.isKillOkay(move[0], move[1], piece) and i > 3:
                         result[1].append(move)
             return result
         #[[][][][][][][]]
@@ -64,7 +79,7 @@ class Board:
             for move in line:
                 if self.isStepOkay(move[0], move[1]):
                     result[0].append(move)
-                elif self.isKillOkay(move[0], move[1], piece.color):
+                elif self.isKillOkay(move[0], move[1], piece):
                     result[1].append(move)
                     break
                 else:

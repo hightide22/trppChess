@@ -84,7 +84,7 @@ while True:
 
     pg.display.flip()
 
-
+a = input()
 
 
 
