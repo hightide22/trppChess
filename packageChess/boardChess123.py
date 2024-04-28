@@ -34,9 +34,11 @@ class Board:
                 self.board[i][j] = pieces.EmptySpace(i, j)
 
     def isStepOkay(self, x, y) -> True | False:
-        if x >= self.height or y >= self.width or x < 0 or y < 0: return False
+        if x >= self.height or y >= self.width or x < 0 or y < 0:
+            return False
         if type(self.board[y][x]) == self.space:
             return True
+            print((x, y))
         return False
 
     def isKillOkay(self, x, y, piece) -> True | False:
@@ -127,9 +129,8 @@ class Board:
                     result[0].append(line[0])
                 elif self.isKillOkay(line[0][0], line[0][1], piece):
                     result[1].append(line[0])
-                    break
             r1, r2 = [], []
-            for m in result[0]: 
+            for m in result[0]:
                 if self.createNewTable(x, y, m[0], m[1]):
                     r1.append(m)
             for k in result[1]:
@@ -223,7 +224,6 @@ class Board:
                     result[0].append(line[0])
                 elif self.isKillOkay(line[0][0], line[0][1], piece):
                     result[1].append(line[0])
-                    break
             return result
 
         # [[][][][][][][]]
