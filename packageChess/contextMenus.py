@@ -63,3 +63,23 @@ class Menu:
                     if x == 3: return "-1b"
 
             pg.display.flip()
+
+    def startMenu(self) -> '"normal" | "random"':
+        sc = pg.display.set_mode((200, 160))
+        sc.fill("white")
+        pg.display.set_caption("Выберите Режим:")
+
+        while True:
+            startIMG = pg.image.load(r"packageChess\sprites\start.png")
+            startRect = startIMG.get_rect(topleft=(0, 0))
+            sc.blit(startIMG, startRect)
+
+            for event in pg.event.get():
+                ID_event = event.type
+                if ID_event == 1025:
+                    x, y = event.pos
+                    if x > 10 and x < 185:
+                        if y > 15 and y < 70: return "standard"
+                        if y > 90 and y < 145: return "random"
+
+            pg.display.flip()
