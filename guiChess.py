@@ -25,9 +25,9 @@ def updateStandartDesk():
 
 cntxMenu = menu.Menu()
 
-#mode = cntxMenu.startMenu()
+mode = cntxMenu.startMenu()
 
-mode = "standard"
+#mode = "standard"
 
 
 screen = pg.display.set_mode((640, 640))
@@ -47,7 +47,7 @@ elif mode == "random":
     gameBoard.setRandomBoard()
 
 
-
+print(gameBoard.board)
 while True:
 
     #  Трансформация пешек
@@ -69,7 +69,8 @@ while True:
     for event in pg.event.get():
         ID_event = event.type
 
-        if ID_event == pg.QUIT: exit()
+        if ID_event == pg.QUIT:
+            exit()
 
         if ID_event == 1025:
             if gameBoard.notSelected:
@@ -81,13 +82,12 @@ while True:
                 gameBoard.notSelected = not (len(gameBoard.turns[0]) or len(gameBoard.turns[1]))
                 if not gameBoard.notSelected:
                     selectedPiece = (x, y)
-                    # log.addElem(str(x) + " " + str(y))
             else:
                 x, y = event.pos
                 click = (x//80, y//80)
                 if click in gameBoard.turns[0] or click in gameBoard.turns[1]:
                     gameBoard.movePiece(selectedPiece[0], selectedPiece[1], click[0], click[1])
-                    gameBoard.checkCheck()
+                    ch = gameBoard.checkCheck()
                     gameBoard.turn *= -1
 
                 gameBoard.turns = []
@@ -101,3 +101,4 @@ while True:
 # place = text.get_rect(topleft=(660, 0), height=200, width = 100)
 # screen.blit(text, place)
 # log = console.console()
+

@@ -54,11 +54,9 @@ class Board:
     def movePiece(self, xStart, yStart, xEnd, yEnd):
         piece = self.board[yStart][xStart]
         pieceT = self.board[yEnd][xEnd]
-        piece.move(xEnd, yEnd)
         self.board[yStart][xStart] = pieces.EmptySpace(xStart, yStart)
         self.board[yEnd][xEnd] = piece
-        piece.x = xEnd
-        piece.y = yEnd
+        piece.move(xEnd, yEnd)
         piece.wasMoved = True
         if isinstance(piece, pieces.Pawn):
             if isinstance(pieceT, self.space):
@@ -102,7 +100,11 @@ class Board:
             for i in range(8):
                 for move in dirs[i]:
                     if self.isStepOkay(move[0], move[1]) and i < 4:
-                        result[0].append(move)
+                        if abs(move[1] - y) == 1:
+                            result[0].append(move)
+                        else:
+                            if isinstance(self.board[int((move[1] + y)/2)][x], pieces.EmptySpace):
+                                result[0].append(move)
                     if self.isKillOkay(move[0], move[1], piece) and i > 3:
                         result[1].append(move)
             r1, r2 = [], []
@@ -414,21 +416,22 @@ class Board:
             return True
 
     def checkForStalemate(self) -> True | False:
-        if (self.whiteChecked or self.blackChecked):
+        if self.whiteChecked or self.blackChecked:
             return False
         if self.turn == 1:
             for line in self.board:
                 for piece in line:
-                    if piece.color == -1:
+                    if piece.color == -1 or piece.color == 0:
                         continue
                     else:
                         if len(self.transformDir(piece.x, piece.y)[0]) > 0 or len(self.transformDir(piece.x, piece.y)[1]) > 0:
                             return False
             return True
         else:
-            for line in self.board:
-                for piece in line:
-                    if piece.color == 1: continue
+            for i in range(8):
+                for j in range(8):
+                    piece = self.board[i][j]
+                    if piece.color == 1 or piece.color == 0: continue
                     else:
                         if len(self.transformDir(piece.x, piece.y)[0]) > 0 or len(self.transformDir(piece.x, piece.y)[1]) > 0:
                             return False

@@ -5,7 +5,7 @@ class Piece:
     strType = "o"
     wasMoved = False
 
-    def __init__(self, color=0, x=0, y=0) -> None:
+    def __init__(self, color, x=0, y=0) -> None:
         self.x = x
         self.color = color
         self.y = y
