@@ -31,13 +31,15 @@ mode = cntxMenu.startMenu()
 
 
 screen = pg.display.set_mode((640, 640))
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (640,640)
 
 screen.fill("white")
 pg.display.set_caption("Chess")
 boardIMG = pg.image.load(r"packageChess/sprites/chessBoard.jpg")
 boardRect = boardIMG.get_rect(bottomright=(640, 640))
 screen.blit(boardIMG, boardRect)
+
+pg.init()
+pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
 
 gameBoard = boardChess.Board()
 
@@ -86,8 +88,15 @@ while True:
                 x, y = event.pos
                 click = (x//80, y//80)
                 if click in gameBoard.turns[0] or click in gameBoard.turns[1]:
+                    if click in gameBoard.turns[0]:
+                        pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
+                    else:
+                        pg.mixer.music.load(r"packageChess/sprites/move-check.mp3")
                     gameBoard.movePiece(selectedPiece[0], selectedPiece[1], click[0], click[1])
-                    ch = gameBoard.checkCheck()
+                    pg.mixer.music.play()
+                    if gameBoard.checkCheck():
+                        pg.mixer.music.load(r"packageChess/sprites/steam-message.mp3")
+                        pg.mixer.music.play()
                     gameBoard.turn *= -1
 
                 gameBoard.turns = []
