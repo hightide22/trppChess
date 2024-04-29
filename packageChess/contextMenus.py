@@ -64,22 +64,29 @@ class Menu:
 
             pg.display.flip()
 
-    def startMenu(self) -> '"normal" | "random"':
-        sc = pg.display.set_mode((200, 160))
+    def startMenu(self) -> '"standard" | "random" | "standardTimed" | "randomTimed"':
+        sc = pg.display.set_mode((245, 240))
         sc.fill("white")
         pg.display.set_caption("Выберите Режим:")
 
         while True:
-            startIMG = pg.image.load(r"packageChess\sprites\start.png")
+            startIMG = pg.image.load(r"packageChess\sprites\startSecret.png")
             startRect = startIMG.get_rect(topleft=(0, 0))
             sc.blit(startIMG, startRect)
 
             for event in pg.event.get():
                 ID_event = event.type
+                if ID_event == pg.QUIT:
+                    exit()
                 if ID_event == 1025:
                     x, y = event.pos
-                    if x > 10 and x < 185:
-                        if y > 15 and y < 70: return "standard"
-                        if y > 90 and y < 145: return "random"
+                    if 10 < x < 185:
+                        if 15 < y < 70: return "standard"
+                        if 90 < y < 145: return "random"
+                        if 165 < y < 215: return "secret"
+                    if 190 < x < 230:
+                        if 15 < y < 70: return "standardTimed"
+                        if 90 < y < 145: return "randomTimed"
+                        if 165 < y < 215: return "secretTimed"
 
             pg.display.flip()

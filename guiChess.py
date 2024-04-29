@@ -1,8 +1,7 @@
 import pygame as pg
-import os
 from packageChess import boardChess123 as boardChess
-from packageChess import consoleChess as console
 from packageChess import menu
+import datetime as dt
 
 
 def updateStandartDesk():
@@ -27,9 +26,6 @@ cntxMenu = menu.Menu()
 
 mode = cntxMenu.startMenu()
 
-#mode = "standard"
-
-
 screen = pg.display.set_mode((640, 640))
 
 screen.fill("white")
@@ -43,13 +39,48 @@ pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
 
 gameBoard = boardChess.Board()
 
-if mode == "standard":
-    gameBoard.setStandardBoard()
-elif mode == "random":
+if mode == "random" or mode == "randomTimed":
     gameBoard.setRandomBoard()
+else:
+    gameBoard.setStandardBoard()
 
+if mode == "secret":
+    secretWhite = None
+    secretBlack = None
+    updateStandartDesk()
 
-print(gameBoard.board)
+    while secretWhite is None:
+        pg.display.flip()
+        for event in pg.event.get():
+            ID_event = event.type
+            if ID_event == pg.QUIT:
+                exit()
+            if ID_event == 1025:
+                x, y = event.pos
+                x = x // 80
+                y = y // 80
+                piece = gameBoard.board[y][x]
+                if piece.color == 1:
+                    secretWhite = piece
+                    pg.mixer.music.load(r"packageChess/sprites/steam-message.mp3")
+                    pg.mixer.music.play()
+    while secretBlack is None:
+        pg.display.flip()
+        for event in pg.event.get():
+            ID_event = event.type
+            if ID_event == pg.QUIT:
+                exit()
+            if ID_event == 1025:
+                x, y = event.pos
+                x = x // 80
+                y = y // 80
+                piece = gameBoard.board[y][x]
+                if piece.color == -1:
+                    secretBlack = piece
+                    pg.mixer.music.load(r"packageChess/sprites/steam-message.mp3")
+                    pg.mixer.music.play()
+
+timeOfLastTurn = dt.datetime.now()
 while True:
 
     #  Трансформация пешек
@@ -63,51 +94,169 @@ while True:
         screen.fill("white")
         pg.display.set_caption("Chess")
 
-    gameBoard.checkForKings()
-    if gameBoard.checkForMate() or gameBoard.checkForStalemate():
-        exit(1)
     updateStandartDesk()
 
-    for event in pg.event.get():
-        ID_event = event.type
+    if mode == "standard" or mode == "random":
+        if gameBoard.checkForMate() or gameBoard.checkForStalemate():
+            break
+        for event in pg.event.get():
+            ID_event = event.type
 
-        if ID_event == pg.QUIT:
-            exit()
+            if ID_event == pg.QUIT:
+                exit()
 
-        if ID_event == 1025:
-            if gameBoard.notSelected:
-                x, y = event.pos
-                x = x // 80
-                y = y // 80
-                print(x + 1, 8 - y )
-                gameBoard.turns = gameBoard.selectPiece(x, y)
-                gameBoard.notSelected = not (len(gameBoard.turns[0]) or len(gameBoard.turns[1]))
-                if not gameBoard.notSelected:
-                    selectedPiece = (x, y)
-            else:
-                x, y = event.pos
-                click = (x//80, y//80)
-                if click in gameBoard.turns[0] or click in gameBoard.turns[1]:
-                    if click in gameBoard.turns[0]:
-                        pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
-                    else:
-                        pg.mixer.music.load(r"packageChess/sprites/move-check.mp3")
-                    gameBoard.movePiece(selectedPiece[0], selectedPiece[1], click[0], click[1])
-                    pg.mixer.music.play()
-                    if gameBoard.checkCheck():
-                        pg.mixer.music.load(r"packageChess/sprites/steam-message.mp3")
+            if ID_event == 1025:
+                if gameBoard.notSelected:
+                    x, y = event.pos
+                    x = x // 80
+                    y = y // 80
+                    print(x + 1, 8 - y)
+                    gameBoard.turns = gameBoard.selectPiece(x, y)
+                    gameBoard.notSelected = not (len(gameBoard.turns[0]) or len(gameBoard.turns[1]))
+                    if not gameBoard.notSelected:
+                        selectedPiece = (x, y)
+                else:
+                    x, y = event.pos
+                    click = (x // 80, y // 80)
+                    if click in gameBoard.turns[0] or click in gameBoard.turns[1]:
+                        if click in gameBoard.turns[0]:
+                            pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
+                        else:
+                            pg.mixer.music.load(r"packageChess/sprites/move-check.mp3")
+                        gameBoard.movePiece(selectedPiece[0], selectedPiece[1], click[0], click[1])
                         pg.mixer.music.play()
-                    gameBoard.turn *= -1
+                        if gameBoard.checkCheck():
+                            pg.mixer.music.load(r"packageChess/sprites/steam-message.mp3")
+                            pg.mixer.music.play()
+                        gameBoard.turn *= -1
 
-                gameBoard.turns = []
-                gameBoard.notSelected = True
+                    gameBoard.turns = []
+                    gameBoard.notSelected = True
+    elif mode == "standardTimed" or mode == "randomTimed":
+        if gameBoard.checkForMate() or gameBoard.checkForStalemate():
+            break
+        curTime = dt.datetime.now()
 
+        if (curTime - timeOfLastTurn).total_seconds() > 20:
+            print(123)
+            gameBoard.turn *= -1
+            gameBoard.turns = []
+            gameBoard.notSelected = True
+            timeOfLastTurn = dt.datetime.now()
+            continue
+
+        for event in pg.event.get():
+            ID_event = event.type
+
+            if ID_event == pg.QUIT:
+                exit()
+
+            if ID_event == 1025:
+                if gameBoard.notSelected:
+                    x, y = event.pos
+                    x = x // 80
+                    y = y // 80
+                    print(x + 1, 8 - y)
+                    gameBoard.turns = gameBoard.selectPiece(x, y)
+                    gameBoard.notSelected = not (len(gameBoard.turns[0]) or len(gameBoard.turns[1]))
+                    if not gameBoard.notSelected:
+                        selectedPiece = (x, y)
+                else:
+                    x, y = event.pos
+                    click = (x // 80, y // 80)
+                    if click in gameBoard.turns[0] or click in gameBoard.turns[1]:
+                        if click in gameBoard.turns[0]:
+                            pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
+                        else:
+                            pg.mixer.music.load(r"packageChess/sprites/move-check.mp3")
+                        gameBoard.movePiece(selectedPiece[0], selectedPiece[1], click[0], click[1])
+                        pg.mixer.music.play()
+                        if gameBoard.checkCheck():
+                            pg.mixer.music.load(r"packageChess/sprites/steam-message.mp3")
+                            pg.mixer.music.play()
+                        timeOfLastTurn = dt.datetime.now()
+                        gameBoard.turn *= -1
+
+                    gameBoard.turns = []
+                    gameBoard.notSelected = True
+    elif mode == "secret" or mode == "secretTimed":
+        curTime = dt.datetime.now()
+
+        if gameBoard.checkForStalemateSecret():
+            break
+        if gameBoard.board[secretWhite.y][secretWhite.x] != secretWhite:
+            gameBoard.boardState = 1
+            break
+        if gameBoard.board[secretBlack.y][secretBlack.x] != secretBlack:
+            gameBoard.boardState = -1
+            break
+
+        if mode == "secretTimed" and (curTime - timeOfLastTurn).total_seconds() > 20:
+            print(123)
+            gameBoard.turn *= -1
+            gameBoard.turns = []
+            gameBoard.notSelected = True
+            timeOfLastTurn = dt.datetime.now()
+            continue
+
+        for event in pg.event.get():
+            ID_event = event.type
+            if ID_event == pg.QUIT:
+                exit()
+
+            if ID_event == 1025:
+                if gameBoard.notSelected:
+                    x, y = event.pos
+                    x = x // 80
+                    y = y // 80
+                    print(x + 1, 8 - y)
+                    gameBoard.turns = gameBoard.selectPieceSecret(x, y)
+                    gameBoard.notSelected = not (len(gameBoard.turns[0]) or len(gameBoard.turns[1]))
+                    if not gameBoard.notSelected:
+                        selectedPiece = (x, y)
+                else:
+                    x, y = event.pos
+                    click = (x // 80, y // 80)
+                    if click in gameBoard.turns[0] or click in gameBoard.turns[1]:
+                        if click in gameBoard.turns[0]:
+                            pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
+                        else:
+                            pg.mixer.music.load(r"packageChess/sprites/move-check.mp3")
+                        timeOfLastTurn = dt.datetime.now()
+                        gameBoard.movePiece(selectedPiece[0], selectedPiece[1], click[0], click[1])
+                        pg.mixer.music.play()
+                        gameBoard.turn *= -1
+
+                    gameBoard.turns = []
+                    gameBoard.notSelected = True
+        pass
     pg.display.flip()
 
-# pg.font.init()
-# font = pg.font.Font(None, 36)
-# text = font.render("Hello Wold", True, (0, 0, 0) )
-# place = text.get_rect(topleft=(660, 0), height=200, width = 100)
-# screen.blit(text, place)
-# log = console.console()
 
+
+
+
+
+
+
+
+pg.font.init()
+font = pg.font.Font(None, 36)
+text = font.render("Hello Wold", True, (0, 0, 0))
+
+if gameBoard.boardState == -1:
+    text = font.render("Победа Белых", True, (255, 0, 0))
+elif gameBoard.boardState == 1:
+    text = font.render("Победа Чёрных", True, (255, 0, 0))
+else:
+    text = font.render("Пат", True, (255, 255, 255))
+
+place = text.get_rect(center=(320, 320))
+screen.blit(text, place)
+
+while True:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            exit()
+
+    pg.display.flip()

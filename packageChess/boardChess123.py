@@ -5,6 +5,7 @@ import random as rn
 
 
 class Board:
+    boardState = 0
     height = 8
     width = 8
 
@@ -46,7 +47,6 @@ class Board:
         pieceT = self.board[y][x]
         if isinstance(piece, pieces.Pawn) and len(self.enPassant) != 0:
             if x == self.enPassant[0] and y == self.enPassant[1] and piece.color == self.enPassant[2] * -1:
-                # self.board[y + piece.color][x] = pieces.EmptySpace(x, y+piece.color)
                 return True
         if piece.color == pieceT.color * -1: return True
         return False
@@ -81,6 +81,33 @@ class Board:
         if self.turn != self.board[y][x].color: return result
         return self.transformDir(x, y)
 
+
+
+    def selectPieceSecret(self, x, y) -> [[], []]:
+        result = [[], []]
+        if self.turn != self.board[y][x].color: return result
+        return self.transformDirForCheck(x, y)
+    def checkForStalemateSecret(self) -> True | False:
+        if self.whiteChecked or self.blackChecked:
+            return False
+        if self.turn == 1:
+            for line in self.board:
+                for piece in line:
+                    if piece.color == -1 or piece.color == 0:
+                        continue
+                    else:
+                        if len(self.transformDirForCheck(piece.x, piece.y)[0]) > 0 or len(self.transformDirForCheck(piece.x, piece.y)[1]) > 0:
+                            return False
+            return True
+        else:
+            for i in range(8):
+                for j in range(8):
+                    piece = self.board[i][j]
+                    if piece.color == 1 or piece.color == 0: continue
+                    else:
+                        if len(self.transformDirForCheck(piece.x, piece.y)[0]) > 0 or len(self.transformDirForCheck(piece.x, piece.y)[1]) > 0:
+                            return False
+            return True
 
 
 
@@ -355,7 +382,6 @@ class Board:
                     if isinstance(self.board[i][j], pieces.KingBlack): self.kingBlack = self.board[i][j]
             self.randomTransform()
             c = self.checkCheck()
-
     def getRandomPice(self, color) -> pieces.Piece:
         c = rn.randint(1, 4)
         if c == 4:
@@ -378,7 +404,6 @@ class Board:
                 return pieces.QueenWhite(0, 0)
             else:
                 return pieces.QueenBlack(0, 0)
-
     def randomTransform(self):
         for j in range(8):
             if isinstance(self.board[0][j], pieces.PawnWhite):
@@ -412,6 +437,7 @@ class Board:
                     else:
                         if len(self.transformDir(piece.x, piece.y)[0]) > 0 or len(self.transformDir(piece.x, piece.y)[1]) > 0:
                             return False
+            self.boardState = 1
             return True
         else:
             for line in self.board:
@@ -420,6 +446,7 @@ class Board:
                     else:
                         if len(self.transformDir(piece.x, piece.y)[0]) > 0 or len(self.transformDir(piece.x, piece.y)[1]) > 0:
                             return False
+            self.boardState = -1
             return True
 
     def checkForStalemate(self) -> True | False:
