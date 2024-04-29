@@ -1,6 +1,6 @@
 import pygame as pg
 from packageChess import boardChess123 as boardChess
-from packageChess import menu
+from packageChess import menu as cntxMenu
 import datetime as dt
 
 
@@ -22,8 +22,6 @@ def updateStandartDesk():
             screen.blit(webImg, webRec)
 
 
-cntxMenu = menu.Menu()
-
 mode = cntxMenu.startMenu()
 
 screen = pg.display.set_mode((640, 640))
@@ -44,7 +42,7 @@ if mode == "random" or mode == "randomTimed":
 else:
     gameBoard.setStandardBoard()
 
-if mode == "secret":
+if mode == "secret" or mode == "secretTimed":
     secretWhite = None
     secretBlack = None
     updateStandartDesk()
@@ -87,10 +85,10 @@ while True:
     if len(gameBoard.checkPawn()):
         p = gameBoard.checkPawn()
         if p[1] == 0:
-            gameBoard.transformPawn(p, cntxMenu.pawnTransormationWhite())
+            gameBoard.transformPawn(cntxMenu.pawnTransormationWhite())
         else:
-            gameBoard.transformPawn(p, cntxMenu.pawnTransormationBlack())
-        screen = pg.display.set_mode((840, 640))
+            gameBoard.transformPawn(cntxMenu.pawnTransormationBlack())
+        screen = pg.display.set_mode((640, 640))
         screen.fill("white")
         pg.display.set_caption("Chess")
 
@@ -135,10 +133,18 @@ while True:
     elif mode == "standardTimed" or mode == "randomTimed":
         if gameBoard.checkForMate() or gameBoard.checkForStalemate():
             break
+
         curTime = dt.datetime.now()
 
         if (curTime - timeOfLastTurn).total_seconds() > 20:
-            print(123)
+            pg.mixer.music.load(r"packageChess/sprites/clock.mp3")
+            pg.mixer.music.play()
+            if gameBoard.turn == 1 and gameBoard.whiteChecked:
+                gameBoard.boardState = 1
+                break
+            elif gameBoard.turn == -1 and gameBoard.blackChecked:
+                gameBoard.boardState = -1
+                break
             gameBoard.turn *= -1
             gameBoard.turns = []
             gameBoard.notSelected = True
@@ -192,7 +198,8 @@ while True:
             break
 
         if mode == "secretTimed" and (curTime - timeOfLastTurn).total_seconds() > 20:
-            print(123)
+            pg.mixer.music.load(r"packageChess/sprites/clock.mp3")
+            pg.mixer.music.play()
             gameBoard.turn *= -1
             gameBoard.turns = []
             gameBoard.notSelected = True
@@ -229,16 +236,7 @@ while True:
 
                     gameBoard.turns = []
                     gameBoard.notSelected = True
-        pass
     pg.display.flip()
-
-
-
-
-
-
-
-
 
 pg.font.init()
 font = pg.font.Font(None, 36)

@@ -5,7 +5,7 @@ class Piece:
     strType = "o"
     wasMoved = False
 
-    def __init__(self, color, x=0, y=0) -> None:
+    def __init__(self, color: int, x=0, y=0) -> None:
         self.x = x
         self.color = color
         self.y = y
@@ -16,13 +16,9 @@ class Piece:
     def __repr__(self):
         return self.strType
 
-    def move(self, x, y):
+    def move(self, x: int, y: int):
         self.x = x
         self.y = y
-
-    def getMoves(self) -> list:
-        result = [[self.x, self.y]]
-        return result
 
     def getDir(self) -> list:
         return []
@@ -36,7 +32,7 @@ class EmptySpace(Piece):
 class Pawn(Piece):
     isEnPassant = False
 
-    def __init__(self, color, x, y) -> None:
+    def __init__(self, color: int, x: int, y: int) -> None:
         super().__init__(color, x, y)
         self.strType = str(color) + "p"
 
@@ -44,11 +40,6 @@ class Pawn(Piece):
 class PawnWhite(Pawn):
     def __init__(self, x, y) -> None:
         super().__init__(1, x, y)
-
-    def getMoves(self) -> list:
-        result = [[self.x, self.y, [(self.x - 1, self.y - 1), (self.x + 1, self.y - 1)]], (self.x, self.y - 1)]
-        if self.y == 6: result.append((self.x, self.y - 2))
-        return result
 
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
@@ -63,11 +54,6 @@ class PawnBlack(Pawn):
     def __init__(self, x, y) -> None:
         super().__init__(-1, x, y)
 
-    def getMoves(self) -> list:
-        result = [[self.x, self.y, (self.x - 1, self.y + 1), (self.x + 1, self.y + 1)], (self.x, self.y + 1)]
-        if self.y == 1: result.append((self.x, self.y + 2))
-        return result
-
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
         result[1].append((self.x, self.y + 1))  # down
@@ -80,15 +66,9 @@ class PawnBlack(Pawn):
 class King(Piece):
     moved = False
 
-    def __init__(self, color, x, y) -> None:
+    def __init__(self, color: int, x: int, y: int) -> None:
         super().__init__(color, x, y)
         self.strType = str(color) + "King"
-
-    def getMoves(self) -> list:
-        result = [[self.x, self.y, []], (self.x, self.y + 1), (self.x, self.y - 1), (self.x + 1, self.y),
-                  (self.x - 1, self.y), (self.x + 1, self.y + 1), (self.x + 1, self.y - 1), (self.x - 1, self.y + 1),
-                  (self.x - 1, self.y - 1)]
-        return result
 
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
@@ -108,32 +88,19 @@ class King(Piece):
 
 
 class KingWhite(King):
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
 
 
 class KingBlack(King):
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
 
 
 class Queen(Piece):
-    def __init__(self, color, x, y) -> None:
+    def __init__(self, color: int, x: int, y: int) -> None:
         super().__init__(color, x, y)
         self.strType = str(color) + "q"
-
-    def getMoves(self) -> list:
-        result = [(self.x, self.y, [])]
-        for i in range(1, 8):
-            result.append((self.x - i, self.y - i))
-            result.append((self.x - i, self.y + i))
-            result.append((self.x + i, self.y - i))
-            result.append((self.x + i, self.y + i))
-            result.append((self.x - i, self.y))
-            result.append((self.x + i, self.y))
-            result.append((self.x, self.y - i))
-            result.append((self.x, self.y + i))
-        return result
 
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
@@ -150,28 +117,19 @@ class Queen(Piece):
 
 
 class QueenWhite(Queen):
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
 
 
 class QueenBlack(Queen):
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
 
 
 class Bishop(Piece):
-    def __init__(self, color, x, y) -> None:
+    def __init__(self, color, x: int, y: int) -> None:
         super().__init__(color, x, y)
         self.strType = str(color) + "b"
-
-    def getMoves(self) -> list:
-        result = [(self.x, self.y, [])]
-        for i in range(1, 8):
-            result.append((self.x - i, self.y - i))
-            result.append((self.x - i, self.y + i))
-            result.append((self.x + i, self.y - i))
-            result.append((self.x + i, self.y + i))
-        return result
 
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
@@ -184,28 +142,19 @@ class Bishop(Piece):
 
 
 class BishopWhite(Bishop):
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
 
 
 class BishopBlack(Bishop):
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
 
 
 class Rook(Piece):
-    def __init__(self, color, x, y) -> None:
+    def __init__(self, color: int, x: int, y: int) -> None:
         super().__init__(color, x, y)
         self.strType = str(color) + "r"
-
-    def getMoves(self) -> list:
-        result = [(self.x, self.y, [])]
-        for i in range(1, 8):
-            result.append((self.x - i, self.y))
-            result.append((self.x + i, self.y))
-            result.append((self.x, self.y - i))
-            result.append((self.x, self.y + i))
-        return result
 
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
@@ -218,37 +167,33 @@ class Rook(Piece):
 
 
 class RookWhite(Rook):
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
         pass
 
 
 class RookBlack(Rook):
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
 
 
 class Knight(Piece):
-    def __init__(self, color, x, y) -> None:
+    def __init__(self, color: int, x: int, y: int) -> None:
         super().__init__(color, x, y)
         self.strType = str(color) + "k"
 
-    def getMoves(self) -> list:
-        result = [(self.x, self.y, []), (self.x + 2, self.y + 1), (self.x + 2, self.y - 1), (self.x - 2, self.y + 1),
-                  (self.x - 2, self.y - 1), (self.x + 1, self.y + 2), (self.x + 1, self.y - 2),
-                  (self.x - 1, self.y + 2), (self.x - 1, self.y - 2)]
-        return result
-
     def getDir(self) -> list:
-        return [(self.x + 2, self.y + 1), (self.x + 2, self.y - 1), (self.x - 2, self.y + 1), (self.x - 2, self.y - 1),
-                (self.x + 1, self.y + 2), (self.x + 1, self.y - 2), (self.x - 1, self.y + 2), (self.x - 1, self.y - 2)]
+        return [[(self.x + 2, self.y + 1)], [(self.x + 2, self.y - 1)], [(self.x - 2, self.y + 1)],
+                [(self.x - 2, self.y - 1)],
+                [(self.x + 1, self.y + 2)], [(self.x + 1, self.y - 2)], [(self.x - 1, self.y + 2)],
+                [(self.x - 1, self.y - 2)]]
 
 
 class KnightWhite(Knight):
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
 
 
 class KnightBlack(Knight):
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
