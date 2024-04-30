@@ -39,7 +39,6 @@ class Board:
             return False
         if type(self.board[y][x]) == self.space:
             return True
-            print((x, y))
         return False
 
     def isKillOkay(self, x: int, y: int, piece: pieces.Piece) -> bool:
@@ -69,9 +68,9 @@ class Board:
             self.enPassant = ()
         if isinstance(piece, pieces.King) and abs(xStart - xEnd) > 1:
             if self.turn == 1:
-                self.board[yStart][int((xStart + xEnd) / 2)] = pieces.RookWhite(int((xStart + xEnd) / 2), yStart)
+                self.board[yStart][(xStart + xEnd) // 2] = pieces.RookWhite((xStart + xEnd) // 2, yStart)
             else:
-                self.board[yStart][int((xStart + xEnd) / 2)] = pieces.RookBlack(int((xStart + xEnd) / 2), yStart)
+                self.board[yStart][(xStart + xEnd) // 2] = pieces.RookBlack((xStart + xEnd) // 2, yStart)
             if xStart > xEnd:
                 self.board[yStart][0] = pieces.EmptySpace(0, yStart)
             else:
@@ -79,7 +78,8 @@ class Board:
 
     def selectPiece(self, x: int, y: int) -> [[], []]:
         result = [[], []]
-        if self.turn != self.board[y][x].color: return result
+        if self.turn != self.board[y][x].color:
+            return result
         return self.transformDir(x, y)
 
     def selectPieceSecret(self, x: int, y: int) -> [[], []]:
@@ -116,13 +116,6 @@ class Board:
         result = [[], []]
         piece = self.board[y][x]
         dirs = piece.getDir()
-        # if isinstance(piece, pieces.Knight):
-        #     for move in dirs:
-        #         if self.isStepOkay(move[0], move[1]):
-        #             result[0].append(move)
-        #         elif self.isKillOkay(move[0], move[1], piece):
-        #             result[1].append(move)
-        #     return result
         if isinstance(piece, pieces.Pawn):
             for i in range(8):
                 for move in dirs[i]:
@@ -178,14 +171,6 @@ class Board:
                                 result[0].append(move)
                     if self.isKillOkay(move[0], move[1], piece) and i > 3:
                         result[1].append(move)
-            for m in result[0]:
-                if self.createNewTable(x, y, m[0], m[1]):
-                    r1.append(m)
-            for m in result[1]:
-                if self.createNewTable(x, y, m[0], m[1]):
-                    r2.append(m)
-            result = [r1, r2]
-            return result
         elif isinstance(piece, pieces.King):
             if (len(dirs[2]) > 1 or len((dirs[3])) > 1) and not (self.blackChecked or self.whiteChecked):
                 if isinstance(self.board[y][0], pieces.Rook) and not self.board[y][0].wasMoved:
@@ -196,6 +181,13 @@ class Board:
                 if isinstance(self.board[y][7], pieces.Rook) and not self.board[y][7].wasMoved:
                     if isinstance(self.board[y][5], self.space) and isinstance(self.board[y][6], self.space):
                         result[0].append(dirs[3][1])
+
+            for line in dirs:
+                if self.isStepOkay(line[0][0], line[0][1]):
+                    result[0].append(line[0])
+                elif self.isKillOkay(line[0][0], line[0][1], piece):
+                    result[1].append(line[0])
+
         # [[][][][][][][]]
         else:
             for line in dirs:
@@ -236,11 +228,10 @@ class Board:
     def createNewTable(self, xStart: int, yStart: int, xEnd: int, yEnd: int) -> bool:
         newBoard = Board()
         newBoard.board = copy.deepcopy(self.board)
-        newBoard.movePiece(xStart, yStart, xEnd, yEnd)
         newBoard.turn = self.turn
+        newBoard.movePiece(xStart, yStart, xEnd, yEnd)
         newBoard.kingWhite, newBoard.kingBlack = newBoard.getKingsCords()
         if newBoard.kingWhite is None or newBoard.kingBlack is None:
-            print(1)
             return False
         newBoard.whiteChecked = self.whiteChecked
         newBoard.blackChecked = self.blackChecked
