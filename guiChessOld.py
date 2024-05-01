@@ -85,9 +85,9 @@ while True:
     if len(gameBoard.checkPawn()):
         p = gameBoard.checkPawn()
         if p[1] == 0:
-            gameBoard.transformPawn(cntxMenu.pawnTransormationWhite())
+            gameBoard.transformPawn(cntxMenu.pawnTransformationWhite())
         else:
-            gameBoard.transformPawn(cntxMenu.pawnTransormationBlack())
+            gameBoard.transformPawn(cntxMenu.pawnTransformationBlack())
         screen = pg.display.set_mode((640, 640))
         screen.fill("white")
         pg.display.set_caption("Chess")

@@ -44,7 +44,8 @@ class PawnWhite(Pawn):
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
         result[0].append((self.x, self.y - 1))  # up
-        if self.y == 6: result[0].append((self.x, self.y - 2))
+        if self.y == 6:
+            result[0].append((self.x, self.y - 2))
         result[4].append((self.x - 1, self.y - 1))
         result[5].append((self.x + 1, self.y - 1))
         return result
@@ -57,7 +58,8 @@ class PawnBlack(Pawn):
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
         result[1].append((self.x, self.y + 1))  # down
-        if self.y == 1: result[1].append((self.x, self.y + 2))
+        if self.y == 1:
+            result[1].append((self.x, self.y + 2))
         result[6].append((self.x - 1, self.y + 1))
         result[7].append((self.x + 1, self.y + 1))
         return result
@@ -185,7 +187,8 @@ class Knight(Piece):
     def getDir(self) -> list:
         return [[(self.x + 2, self.y + 1)], [(self.x + 2, self.y - 1)], [(self.x - 2, self.y + 1)],
                 [(self.x - 2, self.y - 1)],
-                [(self.x + 1, self.y + 2)], [(self.x + 1, self.y - 2)], [(self.x - 1, self.y + 2)],
+                [(self.x + 1, self.y + 2)], [(self.x + 1, self.y - 2)
+                                             ], [(self.x - 1, self.y + 2)],
                 [(self.x - 1, self.y - 2)]]
 
 

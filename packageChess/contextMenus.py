@@ -1,20 +1,20 @@
 import pygame as pg
 
 
-def pawnTransormationWhite() -> str:
+def pawnTransformationWhite() -> str:
     sc = pg.display.set_mode((320, 80))
     sc.fill("white")
     pg.display.set_caption("Выберите фигуру:")
 
     while True:
         pieceIMG1 = pg.image.load(r"packageChess\sprites\1r.png")
-        pieceRect1 = pieceIMG1.get_rect(center=(40 + 80 * 0, 40 ))
+        pieceRect1 = pieceIMG1.get_rect(center=(40 + 80 * 0, 40))
         sc.blit(pieceIMG1, pieceRect1)
         pieceIMG2 = pg.image.load(r"packageChess\sprites\1k.png")
-        pieceRect2 = pieceIMG2.get_rect(center=(40 + 80 * 1, 40 ))
+        pieceRect2 = pieceIMG2.get_rect(center=(40 + 80 * 1, 40))
         sc.blit(pieceIMG2, pieceRect2)
         pieceIMG3 = pg.image.load(r"packageChess\sprites\1q.png")
-        pieceRect3 = pieceIMG3.get_rect(center=(40 + 80 * 2, 40 ))
+        pieceRect3 = pieceIMG3.get_rect(center=(40 + 80 * 2, 40))
         sc.blit(pieceIMG3, pieceRect3)
         pieceIMG4 = pg.image.load(r"packageChess/sprites/1b.png")
         pieceRect4 = pieceIMG4.get_rect(center=(40 + 80 * 3, 40))
@@ -25,28 +25,32 @@ def pawnTransormationWhite() -> str:
                 x, y = event.pos
                 x = x // 80
                 print(x)
-                if x == 0: return "1r"
-                if x == 1: return "1k"
-                if x == 2: return "1q"
-                if x == 3: return "1b"
+                if x == 0:
+                    return "1r"
+                if x == 1:
+                    return "1k"
+                if x == 2:
+                    return "1q"
+                if x == 3:
+                    return "1b"
 
         pg.display.flip()
 
 
-def pawnTransormationBlack() -> str:
+def pawnTransformationBlack() -> str:
     sc = pg.display.set_mode((320, 80))
     sc.fill("white")
     pg.display.set_caption("Выберите фигуру:")
 
     while True:
         pieceIMG1 = pg.image.load(r"packageChess\sprites\-1r.png")
-        pieceRect1 = pieceIMG1.get_rect(center=(40 + 80 * 0, 40 ))
+        pieceRect1 = pieceIMG1.get_rect(center=(40 + 80 * 0, 40))
         sc.blit(pieceIMG1, pieceRect1)
         pieceIMG2 = pg.image.load(r"packageChess\sprites\-1k.png")
-        pieceRect2 = pieceIMG2.get_rect(center=(40 + 80 * 1, 40 ))
+        pieceRect2 = pieceIMG2.get_rect(center=(40 + 80 * 1, 40))
         sc.blit(pieceIMG2, pieceRect2)
         pieceIMG3 = pg.image.load(r"packageChess\sprites\-1q.png")
-        pieceRect3 = pieceIMG3.get_rect(center=(40 + 80 * 2, 40 ))
+        pieceRect3 = pieceIMG3.get_rect(center=(40 + 80 * 2, 40))
         sc.blit(pieceIMG3, pieceRect3)
         pieceIMG4 = pg.image.load(r"packageChess/sprites/-1b.png")
         pieceRect4 = pieceIMG4.get_rect(center=(40 + 80 * 3, 40))
@@ -57,10 +61,14 @@ def pawnTransormationBlack() -> str:
                 x, y = event.pos
                 x = x // 80
                 print(x)
-                if x == 0: return "-1r"
-                if x == 1: return "-1k"
-                if x == 2: return "-1q"
-                if x == 3: return "-1b"
+                if x == 0:
+                    return "-1r"
+                if x == 1:
+                    return "-1k"
+                if x == 2:
+                    return "-1q"
+                if x == 3:
+                    return "-1b"
 
         pg.display.flip()
 
@@ -82,12 +90,18 @@ def startMenu() -> str:
             if ID_event == 1025:
                 x, y = event.pos
                 if 10 < x < 185:
-                    if 15 < y < 70: return "standard"
-                    if 90 < y < 145: return "random"
-                    if 165 < y < 215: return "secret"
+                    if 15 < y < 70:
+                        return "standard"
+                    if 90 < y < 145:
+                        return "random"
+                    if 165 < y < 215:
+                        return "secret"
                 if 190 < x < 230:
-                    if 15 < y < 70: return "standardTimed"
-                    if 90 < y < 145: return "randomTimed"
-                    if 165 < y < 215: return "secretTimed"
+                    if 15 < y < 70:
+                        return "standardTimed"
+                    if 90 < y < 145:
+                        return "randomTimed"
+                    if 165 < y < 215:
+                        return "secretTimed"
 
         pg.display.flip()

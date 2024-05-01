@@ -1,7 +1,8 @@
 import copy
-
 import trppChess.packageChess.piecesChess123 as pieces
 import random as rn
+
+from trppChess.packageChess.piecesChess123 import KingWhite, KingBlack
 
 
 class Board:
@@ -27,9 +28,12 @@ class Board:
     notSelected = True
 
     def __init__(self):
-        self.board = [[0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7],
-                      [0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7],
-                      [0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7]]
+        self.board = [[pieces.EmptySpace(0, 0)] * 8, [pieces.EmptySpace(0, 0)] * 8,
+                      [pieces.EmptySpace(0, 0)] *
+                      8, [pieces.EmptySpace(0, 0)] * 8,
+                      [pieces.EmptySpace(0, 0)] *
+                      8, [pieces.EmptySpace(0, 0)] * 8,
+                      [pieces.EmptySpace(0, 0)] * 8, [pieces.EmptySpace(0, 0)] * 8]
         for i in range(8):
             for j in range(8):
                 self.board[i][j] = pieces.EmptySpace(i, j)
@@ -42,12 +46,14 @@ class Board:
         return False
 
     def isKillOkay(self, x: int, y: int, piece: pieces.Piece) -> bool:
-        if x >= self.height or y >= self.width or x < 0 or y < 0: return False
+        if x >= self.height or y >= self.width or x < 0 or y < 0:
+            return False
         pieceT = self.board[y][x]
         if isinstance(piece, pieces.Pawn) and len(self.enPassant) != 0:
             if x == self.enPassant[0] and y == self.enPassant[1] and piece.color == self.enPassant[2] * -1:
                 return True
-        if piece.color == pieceT.color * -1: return True
+        if piece.color == pieceT.color * -1:
+            return True
         return False
 
     def movePiece(self, xStart: int, yStart: int, xEnd: int, yEnd: int) -> None:
@@ -61,16 +67,19 @@ class Board:
             if isinstance(pieceT, self.space):
                 self.board[yStart][xEnd] = pieces.EmptySpace(xEnd, yStart)
             if abs(yStart - yEnd) == 2:
-                self.enPassant = ((xStart + xEnd) / 2, (yStart + yEnd) / 2, piece.color)
+                self.enPassant = ((xStart + xEnd) / 2,
+                                  (yStart + yEnd) / 2, piece.color)
             else:
                 self.enPassant = ()
         else:
             self.enPassant = ()
         if isinstance(piece, pieces.King) and abs(xStart - xEnd) > 1:
             if self.turn == 1:
-                self.board[yStart][(xStart + xEnd) // 2] = pieces.RookWhite((xStart + xEnd) // 2, yStart)
+                self.board[yStart][(
+                    xStart + xEnd) // 2] = pieces.RookWhite((xStart + xEnd) // 2, yStart)
             else:
-                self.board[yStart][(xStart + xEnd) // 2] = pieces.RookBlack((xStart + xEnd) // 2, yStart)
+                self.board[yStart][(
+                    xStart + xEnd) // 2] = pieces.RookBlack((xStart + xEnd) // 2, yStart)
             if xStart > xEnd:
                 self.board[yStart][0] = pieces.EmptySpace(0, yStart)
             else:
@@ -84,7 +93,8 @@ class Board:
 
     def selectPieceSecret(self, x: int, y: int) -> [[], []]:
         result = [[], []]
-        if self.turn != self.board[y][x].color: return result
+        if self.turn != self.board[y][x].color:
+            return result
         return self.transformDirForCheck(x, y)
 
     def checkForStalemateSecret(self) -> bool:
@@ -120,50 +130,6 @@ class Board:
             for i in range(8):
                 for move in dirs[i]:
                     if self.isStepOkay(move[0], move[1]) and i < 4:
-                        result[0].append(move)
-                    if self.isKillOkay(move[0], move[1], piece) and i > 3:
-                        result[1].append(move)
-            return result
-        elif isinstance(piece, pieces.King):
-            if (len(dirs[2]) > 1 or len((dirs[3])) > 1) and not (self.blackChecked or self.whiteChecked):
-                if isinstance(self.board[y][0], pieces.Rook) and not self.board[y][0].wasMoved:
-                    if isinstance(self.board[y][1], self.space) and isinstance(self.board[y][2],
-                                                                               self.space) and isinstance(
-                        self.board[y][3], self.space):
-                        result[0].append(dirs[2][1])
-                if isinstance(self.board[y][7], pieces.Rook) and not self.board[y][7].wasMoved:
-                    if isinstance(self.board[y][5], self.space) and isinstance(self.board[y][6], self.space):
-                        result[0].append(dirs[3][1])
-            for line in dirs:
-                if self.isStepOkay(line[0][0], line[0][1]):
-                    result[0].append(line[0])
-                elif self.isKillOkay(line[0][0], line[0][1], piece):
-                    result[1].append(line[0])
-            return result
-
-        # [[][][][][][][]]
-        for line in dirs:
-            for move in line:
-                if self.isStepOkay(move[0], move[1]):
-                    result[0].append(move)
-                elif self.isKillOkay(move[0], move[1], piece):
-                    result[1].append(move)
-                    break
-                else:
-                    break
-        return result
-
-    def transformDir(self, x: int, y: int) -> [[(int, int)], [(int, int)]]:
-        result = [[], []]
-        piece = self.board[y][x]
-        dirs = piece.getDir()
-        r1 = []
-        r2 = []
-
-        if isinstance(piece, pieces.Pawn):
-            for i in range(8):
-                for move in dirs[i]:
-                    if self.isStepOkay(move[0], move[1]) and i < 4:
                         if abs(move[1] - y) == 1:
                             result[0].append(move)
                         else:
@@ -174,9 +140,7 @@ class Board:
         elif isinstance(piece, pieces.King):
             if (len(dirs[2]) > 1 or len((dirs[3])) > 1) and not (self.blackChecked or self.whiteChecked):
                 if isinstance(self.board[y][0], pieces.Rook) and not self.board[y][0].wasMoved:
-                    if isinstance(self.board[y][1], self.space) and isinstance(self.board[y][2],
-                                                                               self.space) and isinstance(
-                        self.board[y][3], self.space):
+                    if isinstance(self.board[y][1], self.space) and isinstance(self.board[y][2], self.space) and isinstance(self.board[y][3], self.space):
                         result[0].append(dirs[2][1])
                 if isinstance(self.board[y][7], pieces.Rook) and not self.board[y][7].wasMoved:
                     if isinstance(self.board[y][5], self.space) and isinstance(self.board[y][6], self.space):
@@ -200,6 +164,11 @@ class Board:
                     else:
                         break
 
+        return result
+
+    def transformDir(self, x: int, y: int) -> [[(int, int)], [(int, int)]]:
+        result = self.transformDirForCheck(x, y)
+
         r1 = [p for p in result[0] if self.createNewTable(x, y, p[0], p[1])]
         r2 = [p for p in result[1] if self.createNewTable(x, y, p[0], p[1])]
         return [r1, r2]
@@ -207,11 +176,9 @@ class Board:
     def checkCheck(self) -> bool:
         whiteCords = (self.kingWhite.x, self.kingWhite.y)
         blackCords = (self.kingBlack.x, self.kingBlack.y)
-        isChecked = False
         w, b = False, False
         for i in range(8):
             for j in range(8):
-                piece = self.board[i][j]
                 turns = self.transformDirForCheck(j, i)
                 if whiteCords in turns[1]:
                     self.whiteChecked = True
@@ -243,25 +210,19 @@ class Board:
                 return False
         return True
 
-    def checkForKings(self) -> None:
-        cnt = 0
-        for a in self.board:
-            for b in a:
-                if isinstance(b, pieces.King): cnt += 1
-        if cnt < 2: exit(1)
-
     def checkPawn(self) -> [int, int]:
         for piece in self.board[0]:
             if isinstance(piece, pieces.PawnWhite):
-                return (piece.x, piece.y)
+                return piece.x, piece.y
         for piece in self.board[7]:
             if isinstance(piece, pieces.PawnBlack):
-                return (piece.x, piece.y)
+                return piece.x, piece.y
         return ()
 
     def transformPawn(self, piece: str) -> None:
         pawn = self.checkPawn()
-        if len(pawn) == 0: return
+        if len(pawn) == 0:
+            return
         x, y = pawn
 
         if piece == "1q":
@@ -273,11 +234,11 @@ class Board:
         elif piece == "-1r":
             self.board[y][x] = pieces.RookBlack(x, y)
         elif piece == "1k":
-            self.board[y][x] = pieces.KnightWhiteWhite(x, y)
+            self.board[y][x] = pieces.KnightWhite(x, y)
         elif piece == "-1k":
-            self.board[y][x] = pieces.KnightBlackBlack(x, y)
+            self.board[y][x] = pieces.KnightBlack(x, y)
         elif piece == "1b":
-            self.board[y][x] = pieces.BishopWhiteWhite(x, y)
+            self.board[y][x] = pieces.BishopWhite(x, y)
         elif piece == "-1b":
             self.board[y][x] = pieces.BishopBlack(x, y)
 
@@ -332,12 +293,14 @@ class Board:
                 for j in range(8):
                     self.board[i][j] = bufArr[i * 8 + j]
                     self.board[i][j].move(j, i)
-                    if isinstance(self.board[i][j], pieces.KingWhite): self.kingWhite = self.board[i][j]
-                    if isinstance(self.board[i][j], pieces.KingBlack): self.kingBlack = self.board[i][j]
+                    if isinstance(self.board[i][j], pieces.KingWhite):
+                        self.kingWhite = self.board[i][j]
+                    if isinstance(self.board[i][j], pieces.KingBlack):
+                        self.kingBlack = self.board[i][j]
             self.randomTransform()
             c = self.checkCheck()
 
-    def getRandomPice(self, color: str) -> pieces.Piece:
+    def getRandomPiece(self, color: int) -> pieces.Piece:
         c = rn.randint(1, 4)
         if c == 4:
             if color == 1:
@@ -363,19 +326,21 @@ class Board:
     def randomTransform(self) -> None:
         for j in range(8):
             if isinstance(self.board[0][j], pieces.PawnWhite):
-                self.board[0][j] = self.getRandomPice(1)
+                self.board[0][j] = self.getRandomPiece(1)
                 self.board[0][j].move(j, 0)
             if isinstance(self.board[7][j], pieces.PawnBlack):
-                self.board[7][j] = self.getRandomPice(-1)
+                self.board[7][j] = self.getRandomPiece(-1)
                 self.board[7][j].move(j, 7)
 
-    def getKingsCords(self) -> None:
+    def getKingsCords(self) -> tuple[KingWhite | None, KingBlack | None]:
         w = None
         b = None
         for line in self.board:
             for piece in line:
-                if isinstance(piece, pieces.KingWhite): w = piece
-                if isinstance(piece, pieces.KingBlack): b = piece
+                if isinstance(piece, pieces.KingWhite):
+                    w = piece
+                if isinstance(piece, pieces.KingBlack):
+                    b = piece
         return w, b
 
     def checkForMate(self) -> bool:
