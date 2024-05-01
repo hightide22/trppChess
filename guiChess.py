@@ -93,7 +93,7 @@ class Gui:
             self.screen.fill("white")
             pg.display.set_caption("Chess")
 
-    def mainLoop(self):
+    def run(self):
         self.setStart()
         while self.loop:
             self.pawnTransformation()
@@ -150,7 +150,6 @@ class Gui:
                 if self.gameBoard.checkForMate() or self.gameBoard.checkForStalemate():
                     self.loop = False
 
-
                 if self.mode[-5:] == "Timed" and self.runOutOfTime(): continue
 
                 for event in pg.event.get():
@@ -167,7 +166,7 @@ class Gui:
                             print(x + 1, 8 - y)
                             self.gameBoard.turns = self.gameBoard.selectPiece(x, y)
                             self.gameBoard.notSelected = not (
-                                        len(self.gameBoard.turns[0]) or len(self.gameBoard.turns[1]))
+                                    len(self.gameBoard.turns[0]) or len(self.gameBoard.turns[1]))
                             if not self.gameBoard.notSelected:
                                 self.selectedPiece = (x, y)
                         else:
@@ -228,97 +227,6 @@ class Gui:
             return True
         return False
 
-    def standardLoop(self):
-        if self.gameBoard.checkForMate() or self.gameBoard.checkForStalemate():
-            self.loop = False
-            return
-
-        if self.mode[-5:] == "Timed" and self.runOutOfTime(): return
-
-        for event in pg.event.get():
-            ID_event = event.type
-
-            if ID_event == pg.QUIT:
-                exit()
-
-            if ID_event == 1025:
-                if self.gameBoard.notSelected:
-                    x, y = event.pos
-                    x = x // 80
-                    y = y // 80
-                    print(x + 1, 8 - y)
-                    self.gameBoard.turns = self.gameBoard.selectPiece(x, y)
-                    self.gameBoard.notSelected = not (len(self.gameBoard.turns[0]) or len(self.gameBoard.turns[1]))
-                    if not self.gameBoard.notSelected:
-                        self.selectedPiece = (x, y)
-                else:
-                    x, y = event.pos
-                    click = (x // 80, y // 80)
-                    if click in self.gameBoard.turns[0] or click in self.gameBoard.turns[1]:
-                        if click in self.gameBoard.turns[0]:
-                            pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
-                        else:
-                            pg.mixer.music.load(r"packageChess/sprites/move-check.mp3")
-                        self.gameBoard.movePiece(self.selectedPiece[0], self.selectedPiece[1], click[0], click[1])
-                        pg.mixer.music.play()
-                        if self.gameBoard.checkCheck():
-                            pg.mixer.music.load(r"packageChess/sprites/steam-message.mp3")
-                            pg.mixer.music.play()
-                        self.timeOfLastTurn = dt.datetime.now()
-                        self.gameBoard.turn *= -1
-
-                    self.gameBoard.turns = []
-                    self.gameBoard.notSelected = True
-            return True
-
-    def secretLoop(self):
-
-        if self.gameBoard.checkForStalemateSecret():
-            self.loop = False
-            return
-        if self.gameBoard.board[self.secretWhite.y][self.secretWhite.x] != self.secretWhite:
-            self.gameBoard.boardState = 1
-            self.loop = False
-            return
-        if self.gameBoard.board[self.secretBlack.y][self.secretBlack.x] != self.secretBlack:
-            self.gameBoard.boardState = -1
-            self.loop = False
-            return
-
-        if self.mode[-5:] == "Timed" and self.runOutOfTime():
-            return
-
-
-        for event in pg.event.get():
-            ID_event = event.type
-            if ID_event == pg.QUIT:
-                exit()
-
-            if ID_event == 1025:
-                if self.gameBoard.notSelected:
-                    x, y = event.pos
-                    x = x // 80
-                    y = y // 80
-                    print(x + 1, 8 - y)
-                    self.gameBoard.turns = self.gameBoard.selectPieceSecret(x, y)
-                    self.gameBoard.notSelected = not (self.gameBoard.turns[0] or self.gameBoard.turns[1])
-                    if not self.gameBoard.notSelected:
-                        self.selectedPiece = (x, y)
-                else:
-                    x, y = event.pos
-                    click = (x // 80, y // 80)
-                    if click in self.gameBoard.turns[0] or click in self.gameBoard.turns[1]:
-                        if click in self.gameBoard.turns[0]:
-                            pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
-                        else:
-                            pg.mixer.music.load(r"packageChess/sprites/move-check.mp3")
-                        self.timeOfLastTurn = dt.datetime.now()
-                        self.gameBoard.movePiece(self.selectedPiece[0], self.selectedPiece[1], click[0], click[1])
-                        pg.mixer.music.play()
-                        self.gameBoard.turn *= -1
-
-                    self.gameBoard.turns = []
-                    self.gameBoard.notSelected = True
 
     def endOfGame(self):
         pg.font.init()
