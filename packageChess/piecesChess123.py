@@ -21,7 +21,11 @@ class Piece:
         self.y = y
 
     def getDir(self) -> list:
-        return []
+        """
+        :return: list of lists of moves in all directions:
+                        up, down, left, right, upleft, upright, downleft, downright tuple(x: int, y: int)
+        """
+        return [[], [], [], [], [], [], [], []]
 
 
 class EmptySpace(Piece):

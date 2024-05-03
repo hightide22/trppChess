@@ -22,7 +22,7 @@ def updateStandartDesk():
             screen.blit(webImg, webRec)
 
 
-mode = cntxMenu.startMenu()
+mode = cntxMenu.start_menu()
 
 screen = pg.display.set_mode((640, 640))
 
@@ -38,9 +38,9 @@ pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
 gameBoard = boardChess.Board()
 
 if mode == "random" or mode == "randomTimed":
-    gameBoard.setRandomBoard()
+    gameBoard.set_random_board()
 else:
-    gameBoard.setStandardBoard()
+    gameBoard.set_standard_board()
 
 if mode == "secret" or mode == "secretTimed":
     secretWhite = None
@@ -82,12 +82,12 @@ timeOfLastTurn = dt.datetime.now()
 while True:
 
     #  Трансформация пешек
-    if len(gameBoard.checkPawn()):
-        p = gameBoard.checkPawn()
+    if len(gameBoard.check_pawn()):
+        p = gameBoard.check_pawn()
         if p[1] == 0:
-            gameBoard.transformPawn(cntxMenu.pawnTransformationWhite())
+            gameBoard.transform_pawn(cntxMenu.pawn_transformation_white())
         else:
-            gameBoard.transformPawn(cntxMenu.pawnTransformationBlack())
+            gameBoard.transform_pawn(cntxMenu.pawn_transformation_black())
         screen = pg.display.set_mode((640, 640))
         screen.fill("white")
         pg.display.set_caption("Chess")
@@ -95,7 +95,7 @@ while True:
     updateStandartDesk()
 
     if mode == "standard" or mode == "random":
-        if gameBoard.checkForMate() or gameBoard.checkForStalemate():
+        if gameBoard.check_for_mate() or gameBoard.check_for_stalemate():
             break
         for event in pg.event.get():
             ID_event = event.type
@@ -109,7 +109,7 @@ while True:
                     x = x // 80
                     y = y // 80
                     print(x + 1, 8 - y)
-                    gameBoard.turns = gameBoard.selectPiece(x, y)
+                    gameBoard.turns = gameBoard.select_piece(x, y)
                     gameBoard.notSelected = not (len(gameBoard.turns[0]) or len(gameBoard.turns[1]))
                     if not gameBoard.notSelected:
                         selectedPiece = (x, y)
@@ -122,9 +122,9 @@ while True:
                             pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
                         else:
                             pg.mixer.music.load(r"packageChess/sprites/move-check.mp3")
-                        gameBoard.movePiece(selectedPiece[0], selectedPiece[1], click[0], click[1])
+                        gameBoard.move_piece(selectedPiece[0], selectedPiece[1], click[0], click[1])
                         pg.mixer.music.play()
-                        if gameBoard.checkCheck():
+                        if gameBoard.check_check():
                             pg.mixer.music.load(r"packageChess/sprites/steam-message.mp3")
                             pg.mixer.music.play()
                         gameBoard.turn *= -1
@@ -132,7 +132,7 @@ while True:
                     gameBoard.turns = []
                     gameBoard.notSelected = True
     elif mode == "standardTimed" or mode == "randomTimed":
-        if gameBoard.checkForMate() or gameBoard.checkForStalemate():
+        if gameBoard.check_for_mate() or gameBoard.check_for_stalemate():
             break
 
         curTime = dt.datetime.now()
@@ -140,11 +140,11 @@ while True:
         if (curTime - timeOfLastTurn).total_seconds() > 20:
             pg.mixer.music.load(r"packageChess/sprites/clock.mp3")
             pg.mixer.music.play()
-            if gameBoard.turn == 1 and gameBoard.whiteChecked:
-                gameBoard.boardState = 1
+            if gameBoard.turn == 1 and gameBoard.white_checked:
+                gameBoard.board_state = 1
                 break
-            elif gameBoard.turn == -1 and gameBoard.blackChecked:
-                gameBoard.boardState = -1
+            elif gameBoard.turn == -1 and gameBoard.black_checked:
+                gameBoard.board_state = -1
                 break
             gameBoard.turn *= -1
             gameBoard.turns = []
@@ -164,7 +164,7 @@ while True:
                     x = x // 80
                     y = y // 80
                     print(x + 1, 8 - y)
-                    gameBoard.turns = gameBoard.selectPiece(x, y)
+                    gameBoard.turns = gameBoard.select_piece(x, y)
                     gameBoard.notSelected = not (len(gameBoard.turns[0]) or len(gameBoard.turns[1]))
                     if not gameBoard.notSelected:
                         selectedPiece = (x, y)
@@ -176,9 +176,9 @@ while True:
                             pg.mixer.music.load(r"packageChess/sprites/move-self.mp3")
                         else:
                             pg.mixer.music.load(r"packageChess/sprites/move-check.mp3")
-                        gameBoard.movePiece(selectedPiece[0], selectedPiece[1], click[0], click[1])
+                        gameBoard.move_piece(selectedPiece[0], selectedPiece[1], click[0], click[1])
                         pg.mixer.music.play()
-                        if gameBoard.checkCheck():
+                        if gameBoard.check_check():
                             pg.mixer.music.load(r"packageChess/sprites/steam-message.mp3")
                             pg.mixer.music.play()
                         timeOfLastTurn = dt.datetime.now()
@@ -189,13 +189,13 @@ while True:
     elif mode == "secret" or mode == "secretTimed":
         curTime = dt.datetime.now()
 
-        if gameBoard.checkForStalemateSecret():
+        if gameBoard.check_for_stalemate_secret():
             break
         if gameBoard.board[secretWhite.y][secretWhite.x] != secretWhite:
-            gameBoard.boardState = 1
+            gameBoard.board_state = 1
             break
         if gameBoard.board[secretBlack.y][secretBlack.x] != secretBlack:
-            gameBoard.boardState = -1
+            gameBoard.board_state = -1
             break
 
         if mode == "secretTimed" and (curTime - timeOfLastTurn).total_seconds() > 20:
@@ -218,7 +218,7 @@ while True:
                     x = x // 80
                     y = y // 80
                     print(x + 1, 8 - y)
-                    gameBoard.turns = gameBoard.selectPieceSecret(x, y)
+                    gameBoard.turns = gameBoard.select_piece_secret(x, y)
                     gameBoard.notSelected = not (len(gameBoard.turns[0]) or len(gameBoard.turns[1]))
                     if not gameBoard.notSelected:
                         selectedPiece = (x, y)
@@ -231,7 +231,7 @@ while True:
                         else:
                             pg.mixer.music.load(r"packageChess/sprites/move-check.mp3")
                         timeOfLastTurn = dt.datetime.now()
-                        gameBoard.movePiece(selectedPiece[0], selectedPiece[1], click[0], click[1])
+                        gameBoard.move_piece(selectedPiece[0], selectedPiece[1], click[0], click[1])
                         pg.mixer.music.play()
                         gameBoard.turn *= -1
 
@@ -243,9 +243,9 @@ pg.font.init()
 font = pg.font.Font(None, 36)
 text = font.render("Hello Wold", True, (0, 0, 0))
 
-if gameBoard.boardState == -1:
+if gameBoard.board_state == -1:
     text = font.render("Победа Белых", True, (255, 0, 0))
-elif gameBoard.boardState == 1:
+elif gameBoard.board_state == 1:
     text = font.render("Победа Чёрных", True, (255, 0, 0))
 else:
     text = font.render("Пат", True, (255, 255, 255))

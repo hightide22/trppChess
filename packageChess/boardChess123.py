@@ -6,15 +6,15 @@ from trppChess.packageChess.piecesChess123 import KingWhite, KingBlack
 
 
 class Board:
-    boardState = 0
+    board_state = 0
     height = 8
     width = 8
 
-    blackChecked = False
-    whiteChecked = False
+    black_checked = False
+    white_checked = False
 
-    kingWhite = None
-    kingBlack = None
+    king_white = None
+    king_black = None
 
     enPassant = ()
 
@@ -38,14 +38,14 @@ class Board:
             for j in range(8):
                 self.board[i][j] = pieces.EmptySpace(i, j)
 
-    def isStepOkay(self, x: int, y: int) -> bool:
+    def is_step_okay(self, x: int, y: int) -> bool:
         if x >= self.height or y >= self.width or x < 0 or y < 0:
             return False
         if type(self.board[y][x]) == self.space:
             return True
         return False
 
-    def isKillOkay(self, x: int, y: int, piece: pieces.Piece) -> bool:
+    def is_kill_okay(self, x: int, y: int, piece: pieces.Piece) -> bool:
         if x >= self.height or y >= self.width or x < 0 or y < 0:
             return False
         pieceT = self.board[y][x]
@@ -56,7 +56,7 @@ class Board:
             return True
         return False
 
-    def movePiece(self, xStart: int, yStart: int, xEnd: int, yEnd: int) -> None:
+    def move_piece(self, xStart: int, yStart: int, xEnd: int, yEnd: int) -> None:
         piece = self.board[yStart][xStart]
         pieceT = self.board[yEnd][xEnd]
         self.board[yStart][xStart] = pieces.EmptySpace(xStart, yStart)
@@ -85,20 +85,30 @@ class Board:
             else:
                 self.board[yStart][7] = pieces.EmptySpace(7, yStart)
 
-    def selectPiece(self, x: int, y: int) -> [[], []]:
+    def select_piece(self, x: int, y: int) -> list[list[tuple[int]]]:
+        """
+        :param x: position x
+        :param y: position y
+        :return: [list of normal moves, list of attack moves]
+        """
         result = [[], []]
         if self.turn != self.board[y][x].color:
             return result
-        return self.transformDir(x, y)
+        return self.transform_dir(x, y)
 
-    def selectPieceSecret(self, x: int, y: int) -> [[], []]:
+    def select_piece_secret(self, x: int, y: int) -> list[list[tuple[int]]]:
+        """
+        :param x: position x
+        :param y: position y
+        :return: [list of normal moves, list of attack moves]
+        """
         result = [[], []]
         if self.turn != self.board[y][x].color:
             return result
-        return self.transformDirForCheck(x, y)
+        return self.transform_dir_for_check(x, y)
 
-    def checkForStalemateSecret(self) -> bool:
-        if self.whiteChecked or self.blackChecked:
+    def check_for_stalemate_secret(self) -> bool:
+        if self.white_checked or self.black_checked:
             return False
         if self.turn == 1:
             for line in self.board:
@@ -106,8 +116,8 @@ class Board:
                     if piece.color == -1 or piece.color == 0:
                         continue
                     else:
-                        if len(self.transformDirForCheck(piece.x, piece.y)[0]) > 0 or len(
-                                self.transformDirForCheck(piece.x, piece.y)[1]) > 0:
+                        if len(self.transform_dir_for_check(piece.x, piece.y)[0]) > 0 or len(
+                                self.transform_dir_for_check(piece.x, piece.y)[1]) > 0:
                             return False
             return True
         else:
@@ -117,28 +127,34 @@ class Board:
                     if piece.color == 1 or piece.color == 0:
                         continue
                     else:
-                        if len(self.transformDirForCheck(piece.x, piece.y)[0]) > 0 or len(
-                                self.transformDirForCheck(piece.x, piece.y)[1]) > 0:
+                        if len(self.transform_dir_for_check(piece.x, piece.y)[0]) > 0 or len(
+                                self.transform_dir_for_check(piece.x, piece.y)[1]) > 0:
                             return False
             return True
 
-    def transformDirForCheck(self, x: int, y: int) -> [[], []]:
+    def transform_dir_for_check(self, x: int, y: int) -> list[list[tuple[int]]]:
+        """
+        Doesn't check if your king can move to attacked position.
+        :param x: position x
+        :param y: position y
+        :return: [list of normal moves, list of attack moves]
+        """
         result = [[], []]
         piece = self.board[y][x]
         dirs = piece.getDir()
         if isinstance(piece, pieces.Pawn):
             for i in range(8):
                 for move in dirs[i]:
-                    if self.isStepOkay(move[0], move[1]) and i < 4:
+                    if self.is_step_okay(move[0], move[1]) and i < 4:
                         if abs(move[1] - y) == 1:
                             result[0].append(move)
                         else:
                             if isinstance(self.board[int((move[1] + y) / 2)][x], pieces.EmptySpace):
                                 result[0].append(move)
-                    if self.isKillOkay(move[0], move[1], piece) and i > 3:
+                    if self.is_kill_okay(move[0], move[1], piece) and i > 3:
                         result[1].append(move)
         elif isinstance(piece, pieces.King):
-            if (len(dirs[2]) > 1 or len((dirs[3])) > 1) and not (self.blackChecked or self.whiteChecked):
+            if (len(dirs[2]) > 1 or len((dirs[3])) > 1) and not (self.black_checked or self.white_checked):
                 if isinstance(self.board[y][0], pieces.Rook) and not self.board[y][0].wasMoved:
                     if isinstance(self.board[y][1], self.space) and isinstance(self.board[y][2], self.space) and isinstance(self.board[y][3], self.space):
                         result[0].append(dirs[2][1])
@@ -147,18 +163,18 @@ class Board:
                         result[0].append(dirs[3][1])
 
             for line in dirs:
-                if self.isStepOkay(line[0][0], line[0][1]):
+                if self.is_step_okay(line[0][0], line[0][1]):
                     result[0].append(line[0])
-                elif self.isKillOkay(line[0][0], line[0][1], piece):
+                elif self.is_kill_okay(line[0][0], line[0][1], piece):
                     result[1].append(line[0])
 
         # [[][][][][][][]]
         else:
             for line in dirs:
                 for move in line:
-                    if self.isStepOkay(move[0], move[1]):
+                    if self.is_step_okay(move[0], move[1]):
                         result[0].append(move)
-                    elif self.isKillOkay(move[0], move[1], piece):
+                    elif self.is_kill_okay(move[0], move[1], piece):
                         result[1].append(move)
                         break
                     else:
@@ -166,51 +182,67 @@ class Board:
 
         return result
 
-    def transformDir(self, x: int, y: int) -> [[(int, int)], [(int, int)]]:
-        result = self.transformDirForCheck(x, y)
+    def transform_dir(self, x: int, y: int) -> list[list[tuple[int]]]:
+        """
+        :param x: position x
+        :param y: position y
+        :return: [list of normal moves, list of attack moves]
+        """
+        result = self.transform_dir_for_check(x, y)
 
-        r1 = [p for p in result[0] if self.createNewTable(x, y, p[0], p[1])]
-        r2 = [p for p in result[1] if self.createNewTable(x, y, p[0], p[1])]
+        r1 = [p for p in result[0] if self.create_new_table(x, y, p[0], p[1])]
+        r2 = [p for p in result[1] if self.create_new_table(x, y, p[0], p[1])]
         return [r1, r2]
 
-    def checkCheck(self) -> bool:
-        whiteCords = (self.kingWhite.x, self.kingWhite.y)
-        blackCords = (self.kingBlack.x, self.kingBlack.y)
+    def check_check(self) -> bool:
+        whiteCords = (self.king_white.x, self.king_white.y)
+        blackCords = (self.king_black.x, self.king_black.y)
         w, b = False, False
         for i in range(8):
             for j in range(8):
-                turns = self.transformDirForCheck(j, i)
+                turns = self.transform_dir_for_check(j, i)
                 if whiteCords in turns[1]:
-                    self.whiteChecked = True
+                    self.white_checked = True
                     w = True
                 if blackCords in turns[1]:
-                    self.blackChecked = True
+                    self.black_checked = True
                     b = True
         if not b:
-            self.blackChecked = False
+            self.black_checked = False
         if not w:
-            self.whiteChecked = False
+            self.white_checked = False
         return w or b
 
-    def createNewTable(self, xStart: int, yStart: int, xEnd: int, yEnd: int) -> bool:
+    def create_new_table(self, xStart: int, yStart: int, xEnd: int, yEnd: int) -> bool:
+        """
+        Will your king be not checked after move
+        :param xStart: from x
+        :param yStart: from y
+        :param xEnd: to x
+        :param yEnd: to y
+        :return: True if turn okay
+        """
         newBoard = Board()
         newBoard.board = copy.deepcopy(self.board)
         newBoard.turn = self.turn
-        newBoard.movePiece(xStart, yStart, xEnd, yEnd)
-        newBoard.kingWhite, newBoard.kingBlack = newBoard.getKingsCords()
-        if newBoard.kingWhite is None or newBoard.kingBlack is None:
+        newBoard.move_piece(xStart, yStart, xEnd, yEnd)
+        newBoard.king_white, newBoard.king_black = newBoard.get_kings_cords()
+        if newBoard.king_white is None or newBoard.king_black is None:
             return False
-        newBoard.whiteChecked = self.whiteChecked
-        newBoard.blackChecked = self.blackChecked
-        ch = newBoard.checkCheck()
+        newBoard.white_checked = self.white_checked
+        newBoard.black_checked = self.black_checked
+        ch = newBoard.check_check()
         if ch:
-            if newBoard.turn == 1 and newBoard.whiteChecked:
+            if newBoard.turn == 1 and newBoard.white_checked:
                 return False
-            if newBoard.turn == -1 and newBoard.blackChecked:
+            if newBoard.turn == -1 and newBoard.black_checked:
                 return False
         return True
 
-    def checkPawn(self) -> [int, int]:
+    def check_pawn(self) -> tuple:
+        """
+        :return: cords of pawn to transform (x, y) | empty tuple
+        """
         for piece in self.board[0]:
             if isinstance(piece, pieces.PawnWhite):
                 return piece.x, piece.y
@@ -219,8 +251,11 @@ class Board:
                 return piece.x, piece.y
         return ()
 
-    def transformPawn(self, piece: str) -> None:
-        pawn = self.checkPawn()
+    def transform_pawn(self, piece: str) -> None:
+        """
+        :param piece: string representation of piece
+        """
+        pawn = self.check_pawn()
         if len(pawn) == 0:
             return
         x, y = pawn
@@ -242,8 +277,8 @@ class Board:
         elif piece == "-1b":
             self.board[y][x] = pieces.BishopBlack(x, y)
 
-    def setStandardBoard(self) -> None:
-        for i in range(8):
+    def set_standard_board(self) -> None:
+        for i in range(2, 6):
             for j in range(8):
                 self.board[i][j] = pieces.EmptySpace(i, j)
 
@@ -255,7 +290,7 @@ class Board:
         self.board[0][3] = pieces.QueenBlack(3, 0)
 
         self.board[0][4] = pieces.KingBlack(4, 0)
-        self.kingBlack = self.board[0][4]
+        self.king_black = self.board[0][4]
 
         self.board[0][5] = pieces.BishopBlack(5, 0)
         self.board[0][6] = pieces.KnightBlack(6, 0)
@@ -269,7 +304,7 @@ class Board:
         self.board[7][3] = pieces.QueenWhite(3, 7)
 
         self.board[7][4] = pieces.KingWhite(4, 7)
-        self.kingWhite = self.board[7][4]
+        self.king_white = self.board[7][4]
 
         self.board[7][5] = pieces.BishopWhite(5, 7)
         self.board[7][6] = pieces.KnightWhite(6, 7)
@@ -277,13 +312,16 @@ class Board:
         for i in range(8):
             self.board[6][i] = pieces.PawnWhite(i, 6)
 
-    def setRandomBoard(self) -> None:
+    def set_random_board(self) -> None:
+        """
+        Set random cords of standard set of pieces, transform pawns, repeat until kings are not checked
+        """
         c = True
         self.turn = rn.choice((1, -1))
         while c:
-            self.whiteChecked = False
-            self.blackChecked = False
-            self.setStandardBoard()
+            self.white_checked = False
+            self.black_checked = False
+            self.set_standard_board()
             bufArr = []
             for i in self.board:
                 for j in i:
@@ -294,13 +332,17 @@ class Board:
                     self.board[i][j] = bufArr[i * 8 + j]
                     self.board[i][j].move(j, i)
                     if isinstance(self.board[i][j], pieces.KingWhite):
-                        self.kingWhite = self.board[i][j]
+                        self.king_white = self.board[i][j]
                     if isinstance(self.board[i][j], pieces.KingBlack):
-                        self.kingBlack = self.board[i][j]
-            self.randomTransform()
-            c = self.checkCheck()
+                        self.king_black = self.board[i][j]
+            self.random_transform()
+            c = self.check_check()
 
-    def getRandomPiece(self, color: int) -> pieces.Piece:
+    def get_random_piece(self, color: int) -> pieces.Piece:
+        """
+        :param color: color of piece
+        :return: Knight, Rook, Bishop or Queen piece object for pawn transformation
+        """
         c = rn.randint(1, 4)
         if c == 4:
             if color == 1:
@@ -323,16 +365,19 @@ class Board:
             else:
                 return pieces.QueenBlack(0, 0)
 
-    def randomTransform(self) -> None:
+    def random_transform(self) -> None:
         for j in range(8):
             if isinstance(self.board[0][j], pieces.PawnWhite):
-                self.board[0][j] = self.getRandomPiece(1)
+                self.board[0][j] = self.get_random_piece(1)
                 self.board[0][j].move(j, 0)
             if isinstance(self.board[7][j], pieces.PawnBlack):
-                self.board[7][j] = self.getRandomPiece(-1)
+                self.board[7][j] = self.get_random_piece(-1)
                 self.board[7][j].move(j, 7)
 
-    def getKingsCords(self) -> tuple[KingWhite | None, KingBlack | None]:
+    def get_kings_cords(self) -> tuple[KingWhite | None, KingBlack | None]:
+        """
+        :return: tuple(white king object, black king object)
+        """
         w = None
         b = None
         for line in self.board:
@@ -343,19 +388,19 @@ class Board:
                     b = piece
         return w, b
 
-    def checkForMate(self) -> bool:
-        if not (self.whiteChecked or self.blackChecked):
+    def check_for_mate(self) -> bool:
+        if not (self.white_checked or self.black_checked):
             return False
-        if self.whiteChecked:
+        if self.white_checked:
             for line in self.board:
                 for piece in line:
                     if piece.color == -1:
                         continue
                     else:
-                        if len(self.transformDir(piece.x, piece.y)[0]) > 0 or len(
-                                self.transformDir(piece.x, piece.y)[1]) > 0:
+                        if len(self.transform_dir(piece.x, piece.y)[0]) > 0 or len(
+                                self.transform_dir(piece.x, piece.y)[1]) > 0:
                             return False
-            self.boardState = 1
+            self.board_state = 1
             return True
         else:
             for line in self.board:
@@ -363,14 +408,14 @@ class Board:
                     if piece.color == 1:
                         continue
                     else:
-                        if len(self.transformDir(piece.x, piece.y)[0]) > 0 or len(
-                                self.transformDir(piece.x, piece.y)[1]) > 0:
+                        if len(self.transform_dir(piece.x, piece.y)[0]) > 0 or len(
+                                self.transform_dir(piece.x, piece.y)[1]) > 0:
                             return False
-            self.boardState = -1
+            self.board_state = -1
             return True
 
-    def checkForStalemate(self) -> bool:
-        if self.whiteChecked or self.blackChecked:
+    def check_for_stalemate(self) -> bool:
+        if self.white_checked or self.black_checked:
             return False
         if self.turn == 1:
             for line in self.board:
@@ -378,8 +423,8 @@ class Board:
                     if piece.color == -1 or piece.color == 0:
                         continue
                     else:
-                        if len(self.transformDir(piece.x, piece.y)[0]) > 0 or len(
-                                self.transformDir(piece.x, piece.y)[1]) > 0:
+                        if len(self.transform_dir(piece.x, piece.y)[0]) > 0 or len(
+                                self.transform_dir(piece.x, piece.y)[1]) > 0:
                             return False
             return True
         else:
@@ -389,7 +434,7 @@ class Board:
                     if piece.color == 1 or piece.color == 0:
                         continue
                     else:
-                        if len(self.transformDir(piece.x, piece.y)[0]) > 0 or len(
-                                self.transformDir(piece.x, piece.y)[1]) > 0:
+                        if len(self.transform_dir(piece.x, piece.y)[0]) > 0 or len(
+                                self.transform_dir(piece.x, piece.y)[1]) > 0:
                             return False
             return True

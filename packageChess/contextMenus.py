@@ -1,7 +1,7 @@
 import pygame as pg
 
 
-def pawnTransformationWhite() -> str:
+def pawn_transformation_white() -> str:
     sc = pg.display.set_mode((320, 80))
     sc.fill("white")
     pg.display.set_caption("Выберите фигуру:")
@@ -37,7 +37,7 @@ def pawnTransformationWhite() -> str:
         pg.display.flip()
 
 
-def pawnTransformationBlack() -> str:
+def pawn_transformation_black() -> str:
     sc = pg.display.set_mode((320, 80))
     sc.fill("white")
     pg.display.set_caption("Выберите фигуру:")
@@ -73,7 +73,7 @@ def pawnTransformationBlack() -> str:
         pg.display.flip()
 
 
-def startMenu() -> str:
+def start_menu() -> str:
     sc = pg.display.set_mode((245, 240))
     sc.fill("white")
     pg.display.set_caption("Выберите Режим:")
