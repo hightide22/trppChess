@@ -58,8 +58,10 @@ class PawnWhite(Pawn):
         result[4].append((self.x - 1, self.y - 1))
         result[5].append((self.x + 1, self.y - 1))
         return result
+
     def evolve(self) -> object:
         return PawnTwoWhite(self.x, self.y)
+
 
 class PawnBlack(Pawn):
     def __init__(self, x, y) -> None:
@@ -73,11 +75,13 @@ class PawnBlack(Pawn):
         result[6].append((self.x - 1, self.y + 1))
         result[7].append((self.x + 1, self.y + 1))
         return result
+
     def evolve(self) -> object:
         return PawnTwoBlack(self.x, self.y)
 
+
 class King(Piece):
-    wasMoved =  False
+    wasMoved = False
 
     def __init__(self, color: int, x: int, y: int) -> None:
         super().__init__(color, x, y)
@@ -103,14 +107,18 @@ class King(Piece):
 class KingWhite(King):
     def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
+
     def evolve(self) -> object:
         return KingTwoWhite(self.x, self.y)
+
 
 class KingBlack(King):
     def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
+
     def evolve(self) -> object:
         return KingTwoBlack(self.x, self.y)
+
 
 class Queen(Piece):
     def __init__(self, color: int, x: int, y: int) -> None:
@@ -432,8 +440,10 @@ class BishopTwoWhite(Bishop):
         result[2].append((self.x - 1, self.y))
         result[3].append((self.x + 1, self.y))
         return result
+
     def evolve(self) -> object:
         return BishopThreeWhite(self.x, self.y)
+
 
 class BishopTwoBlack(Bishop):
     level = 2
@@ -453,8 +463,10 @@ class BishopTwoBlack(Bishop):
         result[2].append((self.x - 1, self.y))
         result[3].append((self.x + 1, self.y))
         return result
+
     def evolve(self) -> object:
         return BishopThreeBlack(self.x, self.y)
+
 
 class BishopThreeWhite(Bishop):
     level = 3
@@ -498,8 +510,10 @@ class BishopThreeBlack(Bishop):
 
 class KingTwoWhite(King):
     level = 2
+
     def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
+
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
         for i in range(1, 3):
@@ -515,13 +529,17 @@ class KingTwoWhite(King):
             result[2].append((self.x - 2, self.y))  # left
             result[3].append((self.x + 2, self.y))  # right
         return result
+
     def evolve(self) -> object:
         return KingThreeWhite(self.x, self.y)
 
+
 class KingTwoBlack(King):
     level = 2
+
     def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
+
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
         for i in range(1, 3):
@@ -537,12 +555,17 @@ class KingTwoBlack(King):
             result[2].append((self.x - 2, self.y))  # left
             result[3].append((self.x + 2, self.y))  # right
         return result
+
     def evolve(self) -> object:
         return KingThreeBlack(self.x, self.y)
+
+
 class KingThreeWhite(King):
     level = 3
+
     def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
+
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
         for i in range(1, 8):
@@ -559,8 +582,10 @@ class KingThreeWhite(King):
 
 class KingThreeBlack(King):
     level = 3
+
     def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
+
     def getDir(self) -> list:
         result = [[], [], [], [], [], [], [], []]
         for i in range(1, 8):

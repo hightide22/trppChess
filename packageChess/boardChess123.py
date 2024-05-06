@@ -56,8 +56,6 @@ class Board:
             return True
         return False
 
-
-
     def check_check_levelup(self) -> bool:
         whiteCords = (self.king_white.x, self.king_white.y)
         blackCords = (self.king_black.x, self.king_black.y)
@@ -76,6 +74,7 @@ class Board:
         if not w:
             self.white_checked = False
         return w or b
+
     def move_piece_levelup(self, xStart: int, yStart: int, xEnd: int, yEnd: int) -> None:
         piece = self.board[yStart][xStart]
         pieceT = self.board[yEnd][xEnd]
@@ -106,7 +105,6 @@ class Board:
             else:
                 self.board[yStart][7] = pieces.EmptySpace(7, yStart)
         piece.wasMoved = True
-
 
     def transform_dir_levelup(self, x: int, y: int) -> list[list[tuple[int]]]:
         """
@@ -142,13 +140,13 @@ class Board:
                     if self.is_kill_okay(move[0], move[1], piece) and i > 3:
                         result[1].append(move)
         elif isinstance(piece, pieces.King):
-            if (len(dirs[2]) > 1 or len((dirs[3])) > 1) and\
+            if (len(dirs[2]) > 1 or len((dirs[3])) > 1) and \
                     not (self.black_checked or self.white_checked) and \
-                    ((y == 0 or y == 7) and x == 4) :
+                    ((y == 0 or y == 7) and x == 4):
                 if isinstance(self.board[y][0], pieces.Rook) and not self.board[y][0].wasMoved:
                     if isinstance(self.board[y][1], self.space) and isinstance(self.board[y][2],
                                                                                self.space) and isinstance(
-                            self.board[y][3], self.space):
+                        self.board[y][3], self.space):
                         result[0].append(dirs[2][1])
                 if isinstance(self.board[y][7], pieces.Rook) and not self.board[y][7].wasMoved:
                     if isinstance(self.board[y][5], self.space) and isinstance(self.board[y][6], self.space):
@@ -278,7 +276,7 @@ class Board:
                     if piece.color == -1:
                         continue
                     else:
-                        if self.transform_dir_levelup(piece.x, piece.y)[0] or\
+                        if self.transform_dir_levelup(piece.x, piece.y)[0] or \
                                 self.transform_dir_levelup(piece.x, piece.y)[1]:
                             return False
             self.board_state = 1
@@ -289,7 +287,7 @@ class Board:
                     if piece.color == 1:
                         continue
                     else:
-                        if self.transform_dir_levelup(piece.x, piece.y)[0] or\
+                        if self.transform_dir_levelup(piece.x, piece.y)[0] or \
                                 self.transform_dir_levelup(piece.x, piece.y)[1]:
                             return False
             self.board_state = -1
@@ -304,7 +302,7 @@ class Board:
                     if piece.color == -1 or piece.color == 0:
                         continue
                     else:
-                        if self.transform_dir_levelup(piece.x, piece.y)[0] or\
+                        if self.transform_dir_levelup(piece.x, piece.y)[0] or \
                                 self.transform_dir_levelup(piece.x, piece.y)[1]:
                             return False
             return True
@@ -315,13 +313,10 @@ class Board:
                     if piece.color == 1 or piece.color == 0:
                         continue
                     else:
-                        if self.transform_dir_levelup(piece.x, piece.y)[0] or\
+                        if self.transform_dir_levelup(piece.x, piece.y)[0] or \
                                 self.transform_dir_levelup(piece.x, piece.y)[1]:
                             return False
             return True
-
-
-
 
     def move_piece(self, xStart: int, yStart: int, xEnd: int, yEnd: int) -> None:
         piece = self.board[yStart][xStart]
@@ -354,6 +349,7 @@ class Board:
                 self.board[yStart][7] = pieces.EmptySpace(7, yStart)
         if isinstance(piece, pieces.Rook) and piece.level == 3 and piece.color == pieceT.color:
             self.board[yStart][xStart] = pieceT
+
     def select_piece(self, x: int, y: int) -> list[list[tuple[int]]]:
         """
         :param x: position x
@@ -427,7 +423,7 @@ class Board:
                 if isinstance(self.board[y][0], pieces.Rook) and not self.board[y][0].wasMoved:
                     if isinstance(self.board[y][1], self.space) and isinstance(self.board[y][2],
                                                                                self.space) and isinstance(
-                            self.board[y][3], self.space):
+                        self.board[y][3], self.space):
                         result[0].append(dirs[2][1])
                 if isinstance(self.board[y][7], pieces.Rook) and not self.board[y][7].wasMoved:
                     if isinstance(self.board[y][5], self.space) and isinstance(self.board[y][6], self.space):
@@ -464,7 +460,6 @@ class Board:
         r1 = [p for p in result[0] if self.create_new_table(x, y, p[0], p[1])]
         r2 = [p for p in result[1] if self.create_new_table(x, y, p[0], p[1])]
         return [r1, r2]
-
 
     def check_check(self) -> bool:
         whiteCords = (self.king_white.x, self.king_white.y)
