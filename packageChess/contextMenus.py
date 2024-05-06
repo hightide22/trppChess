@@ -74,12 +74,12 @@ def pawn_transformation_black() -> str:
 
 
 def start_menu() -> str:
-    sc = pg.display.set_mode((245, 240))
+    sc = pg.display.set_mode((245, 320))
     sc.fill("white")
     pg.display.set_caption("Выберите Режим:")
 
     while True:
-        startIMG = pg.image.load(r"packageChess\sprites\startSecret.png")
+        startIMG = pg.image.load(r"packageChess\sprites\startLevelup.png")
         startRect = startIMG.get_rect(topleft=(0, 0))
         sc.blit(startIMG, startRect)
 
@@ -96,6 +96,8 @@ def start_menu() -> str:
                         return "random"
                     if 165 < y < 215:
                         return "secret"
+                    if 240 < y < 295:
+                        return "levelup"
                 if 190 < x < 230:
                     if 15 < y < 70:
                         return "standardTimed"
@@ -103,5 +105,7 @@ def start_menu() -> str:
                         return "randomTimed"
                     if 165 < y < 215:
                         return "secretTimed"
+                    if 240 < y < 295:
+                        return "levelupTimed"
 
         pg.display.flip()

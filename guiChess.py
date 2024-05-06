@@ -164,7 +164,11 @@ class Gui:
                             self.game_board.turns = []
                             self.game_board.notSelected = True
             else:
-                if self.game_board.check_for_mate() or self.game_board.check_for_stalemate():
+                if (self.mode[:7] != "levelup") and (self.game_board.check_for_mate() or self.game_board.check_for_stalemate()):
+                    self.loop = False
+                    print(1)
+                    break
+                if (self.mode[:7] == "levelup") and (self.game_board.check_for_mate_levelup() or self.game_board.check_for_stalemate_levelup()):
                     self.loop = False
                     print(1)
                     break
@@ -183,8 +187,12 @@ class Gui:
                             x, y = event.pos
                             x //= 80
                             y //= 80
-                            self.game_board.turns = self.game_board.select_piece(
-                                x, y)
+                            if self.mode == "levelup" or self.mode == "levelupTimed":
+                                self.game_board.turns = self.game_board.select_piece_levelup(
+                                    x, y)
+                            else:
+                                self.game_board.turns = self.game_board.select_piece(
+                                    x, y)
                             self.game_board.notSelected = not (
                                     len(self.game_board.turns[0]) or len(self.game_board.turns[1]))
                             if not self.game_board.notSelected:
@@ -199,8 +207,12 @@ class Gui:
                                 else:
                                     pg.mixer.music.load(
                                         r"packageChess/sprites/move-check.mp3")
-                                self.game_board.move_piece(self.selected_piece[0], self.selected_piece[1], click[0],
-                                                           click[1])
+                                if self.mode == "levelup" or self.mode == "levelupTimed":
+                                    self.game_board.move_piece_levelup(self.selected_piece[0], self.selected_piece[1], click[0],
+                                                               click[1])
+                                else:
+                                    self.game_board.move_piece(self.selected_piece[0], self.selected_piece[1], click[0],
+                                                               click[1])
                                 pg.mixer.music.play()
                                 if self.game_board.check_check():
                                     pg.mixer.music.load(
@@ -230,6 +242,18 @@ class Gui:
                 pieceRect = pieceIMG.get_rect(
                     center=(40 + 80 * j, 40 + 80 * i))
                 self.screen.blit(pieceIMG, pieceRect)
+                if self.game_board.board[i][j].level == 2:
+                    pieceIMG = pg.image.load(
+                        r"packageChess/sprites/" + "level2" + ".png")
+                    pieceRect = pieceIMG.get_rect(
+                        center=(40 + 80 * j, 40 + 80 * i))
+                    self.screen.blit(pieceIMG, pieceRect)
+                elif self.game_board.board[i][j].level == 3:
+                    pieceIMG = pg.image.load(
+                        r"packageChess/sprites/" + "level3" + ".png")
+                    pieceRect = pieceIMG.get_rect(
+                        center=(40 + 80 * j, 40 + 80 * i))
+                    self.screen.blit(pieceIMG, pieceRect)
         if len(self.game_board.turns):
             for i in self.game_board.turns[0]:
                 webImg = pg.image.load(r"packageChess/sprites/pos.png")
