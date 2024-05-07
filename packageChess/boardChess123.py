@@ -105,6 +105,16 @@ class Board:
             else:
                 self.board[yStart][7] = pieces.EmptySpace(7, yStart)
         piece.wasMoved = True
+        if isinstance(piece, pieces.Rook) and piece.level == 3 and piece.color == pieceT.color:
+            if xStart != xEnd:
+                d = abs(xStart - xEnd) // (xStart - xEnd)
+                self.board[yEnd][xEnd + d] = pieceT
+                pieceT.move(xEnd + d, yEnd)
+            else:
+                d = abs(yStart - yEnd) // (yStart - yEnd)
+                self.board[yEnd + d][xEnd] = pieceT
+                pieceT.move(xEnd, yEnd + d)
+            pieceT.wasMoved = True
 
     def transform_dir_levelup(self, x: int, y: int) -> list[list[tuple[int]]]:
         """
@@ -144,15 +154,16 @@ class Board:
                     not (self.black_checked or self.white_checked) and \
                     ((y == 0 or y == 7) and x == 4):
                 if isinstance(self.board[y][0], pieces.Rook) and not self.board[y][0].wasMoved:
-                    if isinstance(self.board[y][1], self.space) and isinstance(self.board[y][2],
-                                                                               self.space) and isinstance(
-                        self.board[y][3], self.space):
+                    if isinstance(self.board[y][1], self.space) \
+                            and isinstance(self.board[y][2], self.space) \
+                            and isinstance(self.board[y][3], self.space):
                         result[0].append(dirs[2][1])
                 if isinstance(self.board[y][7], pieces.Rook) and not self.board[y][7].wasMoved:
                     if isinstance(self.board[y][5], self.space) and isinstance(self.board[y][6], self.space):
                         result[0].append(dirs[3][1])
             for line in dirs:
                 for move in line:
+                    if (x == 4 and (y == 0 or y == 7)) and (move[0] == 2 or move[0] == 6) and y == move[1]: continue
                     if self.is_step_okay(move[0], move[1]):
                         result[0].append(move)
                     elif self.is_kill_okay(move[0], move[1], piece):
@@ -163,6 +174,13 @@ class Board:
         elif isinstance(piece, pieces.Rook) and piece.level > 1:
             result = self.transform_dir_rook(piece)
 
+        elif isinstance(piece, pieces.Knight):
+            for line in dirs:
+                for move in line:
+                    if self.is_step_okay(move[0], move[1]):
+                        result[0].append(move)
+                    elif self.is_kill_okay(move[0], move[1], piece):
+                        result[1].append(move)
         # [[][][][][][][]]
         else:
             for line in dirs:
@@ -218,28 +236,34 @@ class Board:
                         break
         elif piece.level == 2:
             for line in dirs:
+                c = (piece.x, piece.y)
                 for move in line:
                     if self.is_step_okay(move[0], move[1]):
                         result[0].append(move)
-                        continue
-                    elif self.is_kill_okay(move[0], move[1], piece):
-                        result[1].append(move)
-                    if self.is_step_okay(move[0] + 1, move[1]):
-                        result[0].append((move[0] + 1, move[1]))
-                    elif self.is_kill_okay(move[0] + 1, move[1], piece):
-                        result[1].append((move[0] + 1, move[1]))
-                    if self.is_step_okay(move[0] - 1, move[1]):
-                        result[0].append((move[0] - 1, move[1]))
-                    elif self.is_kill_okay(move[0] - 1, move[1], piece):
-                        result[1].append((move[0] - 1, move[1]))
-                    if self.is_step_okay(move[0] + 1, move[1] + 1):
-                        result[0].append((move[0] + 1, move[1] + 1))
-                    elif self.is_kill_okay(move[0] + 1, move[1] + 1, piece):
-                        result[1].append((move[0] + 1, move[1] + 1))
-                    if self.is_step_okay(move[0] + 1, move[1] - 1):
-                        result[0].append((move[0] + 1, move[1] - 1))
-                    elif self.is_kill_okay(move[0] + 1, move[1] - 1, piece):
-                        result[1].append((move[0] + 1, move[1] - 1))
+                        c = move
+                        if not (((piece.x == move[0]) and (move[1] == 0 or move[1] == 7))
+                                or ((piece.y == move[1]) and (move[0] == 0 or move[0] == 7))):
+                            continue
+                    elif self.is_kill_okay(c[0], c[1], piece):
+                        c = move
+                        result[1].append(c)
+
+                    if self.is_step_okay(c[0] + 1, c[1]):
+                        result[0].append((c[0] + 1, c[1]))
+                    elif self.is_kill_okay(c[0] + 1, c[1], piece):
+                        result[1].append((c[0] + 1, c[1]))
+                    if self.is_step_okay(c[0] - 1, c[1]):
+                        result[0].append((c[0] - 1, c[1]))
+                    elif self.is_kill_okay(c[0] - 1, c[1], piece):
+                        result[1].append((c[0] - 1, c[1]))
+                    if self.is_step_okay(c[0], c[1] + 1):
+                        result[0].append((c[0], c[1] + 1))
+                    elif self.is_kill_okay(c[0], c[1] + 1, piece):
+                        result[1].append((c[0], c[1] + 1))
+                    if self.is_step_okay(c[0], c[1] - 1):
+                        result[0].append((c[0], c[1] - 1))
+                    elif self.is_kill_okay(c[0], c[1] - 1, piece):
+                        result[1].append((c[0], c[1] - 1))
                     break
         else:
             for line in dirs:
@@ -252,7 +276,7 @@ class Board:
                     else:
                         if 0 <= move[0] <= 7 and 0 <= move[1] <= 7:
                             if self.board[move[1]][move[0]].color == piece.color:
-                                result.append(move)
+                                result[0].append(move)
                         break
         return result
 
@@ -347,8 +371,6 @@ class Board:
                 self.board[yStart][0] = pieces.EmptySpace(0, yStart)
             else:
                 self.board[yStart][7] = pieces.EmptySpace(7, yStart)
-        if isinstance(piece, pieces.Rook) and piece.level == 3 and piece.color == pieceT.color:
-            self.board[yStart][xStart] = pieceT
 
     def select_piece(self, x: int, y: int) -> list[list[tuple[int]]]:
         """

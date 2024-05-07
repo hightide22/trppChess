@@ -351,6 +351,7 @@ class RookThreeBlack(Rook):
 
 
 class KnightTwoWhite(Knight):
+    level = 2
     def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
 
@@ -367,6 +368,7 @@ class KnightTwoWhite(Knight):
 
 
 class KnightTwoBlack(Knight):
+    level = 2
     def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
 
@@ -481,10 +483,10 @@ class BishopThreeWhite(Bishop):
             result[5].append((self.x + i, self.y - i))  # upright
             result[6].append((self.x - i, self.y + i))  # downleft
             result[7].append((self.x + i, self.y + i))  # downright
-            result[0].append((self.x - i, self.y + 1 + i))
-            result[1].append((self.x - i - 1, self.y - i))
-            result[2].append((self.x - 1 + i, self.y - 1 - i))
-            result[3].append((self.x + 1 + i, self.y + i))
+            result[0].append((self.x - i, self.y + i))
+            result[1].append((self.x - i, self.y - i))
+            result[2].append((self.x + i, self.y - i))
+            result[3].append((self.x + i, self.y + i))
         return result
 
 
@@ -525,7 +527,7 @@ class KingTwoWhite(King):
             result[5].append((self.x + i, self.y - i))  # upright
             result[6].append((self.x - i, self.y + i))  # downleft
             result[7].append((self.x + i, self.y + i))  # downright
-        if not self.moved:
+        if not self.wasMoved:
             result[2].append((self.x - 2, self.y))  # left
             result[3].append((self.x + 2, self.y))  # right
         return result
