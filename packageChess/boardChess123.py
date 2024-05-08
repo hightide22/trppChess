@@ -181,6 +181,20 @@ class Board:
                         result[0].append(move)
                     elif self.is_kill_okay(move[0], move[1], piece):
                         result[1].append(move)
+        elif isinstance(piece, pieces.Queen) and piece.level == 3:
+            for line in dirs:
+                for move in line:
+                    if self.is_step_okay(move[0], move[1]):
+                        result[0].append(move)
+                    elif self.is_kill_okay(move[0], move[1], piece):
+                        result[1].append(move)
+                        break
+                    else:
+                        break
+            for i in range(8):
+                for j in range(8):
+                    if self.is_step_okay(j, i):
+                        result[0].append((j, i))
         # [[][][][][][][]]
         else:
             for line in dirs:
@@ -362,11 +376,9 @@ class Board:
             self.enPassant = ()
         if isinstance(piece, pieces.King) and abs(xStart - xEnd) > 1:
             if self.turn == 1:
-                self.board[yStart][(
-                                           xStart + xEnd) // 2] = pieces.RookWhite((xStart + xEnd) // 2, yStart)
+                self.board[yStart][(xStart + xEnd) // 2] = pieces.RookWhite((xStart + xEnd) // 2, yStart)
             else:
-                self.board[yStart][(
-                                           xStart + xEnd) // 2] = pieces.RookBlack((xStart + xEnd) // 2, yStart)
+                self.board[yStart][(xStart + xEnd) // 2] = pieces.RookBlack((xStart + xEnd) // 2, yStart)
             if xStart > xEnd:
                 self.board[yStart][0] = pieces.EmptySpace(0, yStart)
             else:

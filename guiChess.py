@@ -1,6 +1,6 @@
 import pygame as pg
 from packageChess import boardChess123 as boardChess
-from packageChess import menu as cntxMenu
+from packageChess import menu as menu
 import datetime as dt
 
 
@@ -66,7 +66,7 @@ class Gui:
         """
         Mode, secret piece window initiation
         """
-        self.mode = cntxMenu.start_menu()
+        self.mode = menu.start_menu()
 
         self.screen.fill("white")
         pg.display.set_caption("Chess")
@@ -94,17 +94,17 @@ class Gui:
             p = self.game_board.check_pawn()
             if p[1] == 0:
                 self.game_board.transform_pawn(
-                    cntxMenu.pawn_transformation_white())
+                    menu.pawn_transformation_white())
             else:
                 self.game_board.transform_pawn(
-                    cntxMenu.pawn_transformation_black())
+                    menu.pawn_transformation_black())
             self.screen = pg.display.set_mode((640, 640))
             self.screen.fill("white")
             pg.display.set_caption("Chess")
 
     def run(self) -> None:
         """
-        main method of 0bject
+        main method of Object
         """
         self.set_start()
         al = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
@@ -160,15 +160,17 @@ class Gui:
                                 pg.mixer.music.play()
                                 self.game_board.turn *= -1
                                 print(al[self.selected_piece[0]], 8 -
-                                      self.selected_piece.y, "-->", al[x], 8 - y, )
+                                      self.selected_piece[1], "-->", al[x], 8 - y, )
                             self.game_board.turns = []
                             self.game_board.notSelected = True
             else:
-                if (self.mode[:7] != "levelup") and (self.game_board.check_for_mate() or self.game_board.check_for_stalemate()):
+                if (self.mode[:7] != "levelup") and (self.game_board.check_for_mate()
+                                                     or self.game_board.check_for_stalemate()):
                     self.loop = False
                     print(1)
                     break
-                if (self.mode[:7] == "levelup") and (self.game_board.check_for_mate_levelup() or self.game_board.check_for_stalemate_levelup()):
+                if (self.mode[:7] == "levelup") and (self.game_board.check_for_mate_levelup()
+                                                     or self.game_board.check_for_stalemate_levelup()):
                     self.loop = False
                     print(1)
                     break
@@ -208,8 +210,8 @@ class Gui:
                                     pg.mixer.music.load(
                                         r"packageChess/sprites/move-check.mp3")
                                 if self.mode == "levelup" or self.mode == "levelupTimed":
-                                    self.game_board.move_piece_levelup(self.selected_piece[0], self.selected_piece[1], click[0],
-                                                               click[1])
+                                    self.game_board.move_piece_levelup(self.selected_piece[0],
+                                                                       self.selected_piece[1], click[0], click[1])
                                 else:
                                     self.game_board.move_piece(self.selected_piece[0], self.selected_piece[1], click[0],
                                                                click[1])
@@ -219,7 +221,8 @@ class Gui:
                                         r"packageChess/sprites/steam-message.mp3")
                                     pg.mixer.music.play()
                                 print(
-                                    al[self.selected_piece[0]], 8 - self.selected_piece[1], "-->", al[x // 80], 8 - y // 80, )
+                                    al[self.selected_piece[0]], 8 - self.selected_piece[1],
+                                    "-->", al[x // 80], 8 - y // 80, )
                                 self.timeOfLastTurn = dt.datetime.now()
                                 self.game_board.turn *= -1
 

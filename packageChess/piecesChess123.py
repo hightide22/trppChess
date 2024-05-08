@@ -143,10 +143,16 @@ class QueenWhite(Queen):
     def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
 
+    def evolve(self) -> object:
+        return QueenTwoWhite(self.x, self.y)
+
 
 class QueenBlack(Queen):
     def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
+
+    def evolve(self) -> object:
+        return QueenTwoBlack(self.x, self.y)
 
 
 class Bishop(Piece):
@@ -352,6 +358,7 @@ class RookThreeBlack(Rook):
 
 class KnightTwoWhite(Knight):
     level = 2
+
     def __init__(self, x: int, y: int) -> None:
         super().__init__(1, x, y)
 
@@ -369,6 +376,7 @@ class KnightTwoWhite(Knight):
 
 class KnightTwoBlack(Knight):
     level = 2
+
     def __init__(self, x: int, y: int) -> None:
         super().__init__(-1, x, y)
 
@@ -600,3 +608,37 @@ class KingThreeBlack(King):
             result[6].append((self.x - i, self.y + i))  # downleft
             result[7].append((self.x + i, self.y + i))  # downright
         return result
+
+
+class QueenTwoWhite(Queen):
+    level = 2
+
+    def __init__(self, x: int, y: int) -> None:
+        super().__init__(1, x, y)
+
+    def evolve(self) -> object:
+        return QueenThreeWhite(self.x, self.y)
+
+
+class QueenTwoBlack(Queen):
+    level = 2
+
+    def __init__(self, x: int, y: int) -> None:
+        super().__init__(-1, x, y)
+
+    def evolve(self) -> object:
+        return QueenThreeBlack(self.x, self.y)
+
+
+class QueenThreeWhite(Queen):
+    level = 3
+
+    def __init__(self, x: int, y: int) -> None:
+        super().__init__(1, x, y)
+
+
+class QueenThreeBlack(Queen):
+    level = 3
+
+    def __init__(self, x: int, y: int) -> None:
+        super().__init__(-1, x, y)
