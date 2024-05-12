@@ -1,6 +1,6 @@
 import pygame as pg
-from packageChess import boardChess123 as boardChess
-from packageChess import menu as menu
+import trppChess.packageChess.boardChess123 as boardChess
+import trppChess.packageChess.contextMenus as menu
 import datetime as dt
 
 
@@ -18,7 +18,6 @@ class Gui:
 
     timeOfLastTurn = None
     time_limit = 15
-
     boardIMG = pg.image.load(r"packageChess/sprites/chessBoard.jpg")
     boardRect = boardIMG.get_rect(bottomright=(640, 640))
 
@@ -106,6 +105,7 @@ class Gui:
         """
         main method of Object
         """
+        print(1)
         self.set_start()
         al = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
         while self.loop:

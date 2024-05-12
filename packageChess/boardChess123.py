@@ -332,6 +332,7 @@ class Board:
             return True
 
     def check_for_stalemate_levelup(self) -> bool:
+        self.check_check()
         if self.white_checked or self.black_checked:
             return False
         if self.turn == 1:
@@ -407,6 +408,7 @@ class Board:
         return self.transform_dir_for_check(x, y)
 
     def check_for_stalemate_secret(self) -> bool:
+        self.check_check()
         if self.white_checked or self.black_checked:
             return False
         if self.turn == 1:
@@ -717,6 +719,7 @@ class Board:
             return True
 
     def check_for_stalemate(self) -> bool:
+        self.check_check()
         if self.white_checked or self.black_checked:
             return False
         if self.turn == 1:
