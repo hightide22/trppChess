@@ -79,7 +79,7 @@ def start_menu() -> str:
     pg.display.set_caption("Выберите Режим:")
 
     while True:
-        startIMG = pg.image.load(r"packageChess\sprites\startLevelup.png")
+        startIMG = pg.image.load(r"packageChess/sprites/startLevelUp.png")
         startRect = startIMG.get_rect(topleft=(0, 0))
         sc.blit(startIMG, startRect)
 
