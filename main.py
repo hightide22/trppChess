@@ -2,7 +2,6 @@ from trppChess.guiChess import Gui
 
 
 def main():
-    print(1)
     game = Gui()
     game.run()
 
