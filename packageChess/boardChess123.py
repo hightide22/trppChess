@@ -6,28 +6,28 @@ from trppChess.packageChess.piecesChess123 import KingWhite, KingBlack
 
 
 class Board:
-    board_state = 0
-    height = 8
-    width = 8
-
-    black_checked = False
-    white_checked = False
-
-    king_white = None
-    king_black = None
-
-    enPassant = ()
-
-    turn = 1
-
-    space = type(pieces.EmptySpace(0, 0))
-
-    board = []
-
-    turns = []
-    notSelected = True
-
     def __init__(self):
+
+        self.board_state = 0
+        self.height = 8
+        self.width = 8
+
+        self.black_checked = False
+        self.white_checked = False
+
+        self.king_white = None
+        self.king_black = None
+
+        self.enPassant = ()
+
+        self.turn = 1
+
+        self.space = type(pieces.EmptySpace(0, 0))
+
+        self.turns = []
+        self.notSelected = True
+
+
         self.board = [[pieces.EmptySpace(0, 0)] * 8, [pieces.EmptySpace(0, 0)] * 8,
                       [pieces.EmptySpace(0, 0)] *
                       8, [pieces.EmptySpace(0, 0)] * 8,
@@ -211,7 +211,7 @@ class Board:
 
     def create_new_table_levelup(self, xStart: int, yStart: int, xEnd: int, yEnd: int) -> bool:
         """
-        Will your king be not checked after move
+        Will your king be checked after move
         :param xStart: from x
         :param yStart: from y
         :param xEnd: to x
@@ -743,3 +743,4 @@ class Board:
                                 self.transform_dir(piece.x, piece.y)[1]) > 0:
                             return False
             return True
+

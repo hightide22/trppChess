@@ -1,13 +1,13 @@
 class Piece:
-    x = 0
-    y = 0
-    color = 0
-    strType = "o"
-    exp = 0
-    level = 1
-    wasMoved = False
+
+
 
     def __init__(self, color: int, x=0, y=0) -> None:
+        self.strType = "o"
+        self.exp = 0
+        self.level = 1
+        self.wasMoved = False
+
         self.x = x
         self.color = color
         self.y = y
@@ -248,9 +248,10 @@ class KnightBlack(Knight):
 
 
 class PawnTwoWhite(Pawn):
-    level = 2
+
 
     def __init__(self, x, y) -> None:
+        self.level = 2
         super().__init__(1, x, y)
 
     def getDir(self) -> list:
@@ -266,9 +267,8 @@ class PawnTwoWhite(Pawn):
 
 
 class PawnTwoBlack(Pawn):
-    level = 2
-
     def __init__(self, x, y) -> None:
+        self.level = 2
         super().__init__(-1, x, y)
 
     def getDir(self) -> list:
@@ -284,9 +284,8 @@ class PawnTwoBlack(Pawn):
 
 
 class PawnThreeWhite(Pawn):
-    level = 3
-
     def __init__(self, x, y) -> None:
+        self.level = 3
         super().__init__(1, x, y)
 
     def getDir(self) -> list:
@@ -303,9 +302,9 @@ class PawnThreeWhite(Pawn):
 
 
 class PawnThreeBlack(Pawn):
-    level = 3
 
     def __init__(self, x, y) -> None:
+        self.level = 3
         super().__init__(-1, x, y)
 
     def getDir(self) -> list:
@@ -322,20 +321,20 @@ class PawnThreeBlack(Pawn):
 
 
 class RookTwoWhite(Rook):
-    level = 2
 
     def __init__(self, x: int, y: int) -> None:
+        self.level = 2
         super().__init__(1, x, y)
-        pass
+
 
     def evolve(self) -> object:
         return RookThreeWhite(self.x, self.y)
 
 
 class RookTwoBlack(Rook):
-    level = 2
 
     def __init__(self, x: int, y: int) -> None:
+        self.level = 2
         super().__init__(-1, x, y)
 
     def evolve(self) -> object:
@@ -343,23 +342,23 @@ class RookTwoBlack(Rook):
 
 
 class RookThreeWhite(Rook):
-    level = 3
 
     def __init__(self, x: int, y: int) -> None:
+        self.level = 3
         super().__init__(1, x, y)
 
 
 class RookThreeBlack(Rook):
-    level = 3
 
     def __init__(self, x: int, y: int) -> None:
+        self.level = 3
         super().__init__(-1, x, y)
 
 
 class KnightTwoWhite(Knight):
-    level = 2
 
     def __init__(self, x: int, y: int) -> None:
+        self.level = 2
         super().__init__(1, x, y)
 
     def getDir(self) -> list:
@@ -375,9 +374,9 @@ class KnightTwoWhite(Knight):
 
 
 class KnightTwoBlack(Knight):
-    level = 2
 
     def __init__(self, x: int, y: int) -> None:
+        self.level = 2
         super().__init__(-1, x, y)
 
     def getDir(self) -> list:

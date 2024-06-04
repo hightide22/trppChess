@@ -5,23 +5,25 @@ import datetime as dt
 
 
 class Gui:
-    screen = pg.display.set_mode((640, 640))
 
-    loop = True
+    def __init__(self):
+        self.screen = pg.display.set_mode((640, 640))
 
-    mode = "standard"
+        self.loop = True
 
-    game_board = None
+        self.mode = "standard"
 
-    secret_white = None
-    secret_black = None
+        self.game_board = None
 
-    timeOfLastTurn = None
-    time_limit = 15
-    boardIMG = pg.image.load(r"packageChess/sprites/chessBoard.jpg")
-    boardRect = boardIMG.get_rect(bottomright=(640, 640))
+        self.secret_white = None
+        self.secret_black = None
 
-    selected_piece = None
+        self.timeOfLastTurn = None
+        self.time_limit = 15
+        self.boardIMG = pg.image.load(r"packageChess/sprites/chessBoard.jpg")
+        self.boardRect = self.boardIMG.get_rect(bottomright=(640, 640))
+
+        self.selected_piece = None
 
     def select_secret_pieces(self) -> None:
         """
